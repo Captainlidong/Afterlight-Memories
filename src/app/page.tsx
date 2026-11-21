@@ -85,6 +85,8 @@ export default function HomePage() {
   const exhibitions = listExhibitions(db);
   const showcase = exhibitions.find((e) => e.is_demo_set) ?? null;
   const showcaseHref = showcase ? `/exhibition/${showcase.id}` : "/create";
+  // 展示站点模式（公网部署）：只浏览，不提供创建/演示数据入口；写入由本地同源守卫另行 403 保护。
+  const isShowcaseSite = process.env.AFTERLIGHT_SHOWCASE === "1";
 
   return (
     <main className="mx-auto flex min-h-screen max-w-3xl flex-col justify-center px-6 py-20">
@@ -103,12 +105,14 @@ export default function HomePage() {
         它不替你决定人生故事，而是帮你发现：你到底在反复拍什么，以及这些照片可以怎样被观看。
       </p>
 
-      <div className="mt-10 flex flex-wrap gap-4">
-        <Link href="/create" className="btn btn-primary">
-          开始策展
-        </Link>
-        <DemoSeedButton />
-      </div>
+      {!isShowcaseSite && (
+        <div className="mt-10 flex flex-wrap gap-4">
+          <Link href="/create" className="btn btn-primary">
+            开始策展
+          </Link>
+          <DemoSeedButton />
+        </div>
+      )}
 
       <Link
         href={showcaseHref}
@@ -150,14 +154,20 @@ export default function HomePage() {
 
       {exhibitions.length > 0 && (
         <section className="mt-14 border-t border-ink-line pt-8">
-          <div className="mb-4 flex items-end justify-between gap-4">
-            <div>
-              <h2 className="text-xs uppercase tracking-[0.2em] text-muted">继续编辑</h2>
-              <p className="mt-1 text-xs text-muted">从最近的进度接着做，或打开已完成的影展观看。</p>
-            </div>
-            <span className="text-xs text-muted">{exhibitions.length} 场</span>
-          </div>
-          <ul className="space-y-2">
+          {/* 列表默认折叠：首页保持「打开就能用」的简洁，自己的影展按需展开查看。 */}
+          <details>
+            <summary className="flex cursor-pointer list-none items-end justify-between gap-4">
+              <span>
+                <span className="text-xs uppercase tracking-[0.2em] text-muted">
+                  {isShowcaseSite ? "在线影展" : "继续编辑"}
+                </span>
+                <span className="mt-1 block text-xs text-muted">
+                  {isShowcaseSite ? "点击展开，浏览本站收录的影展。" : "从最近的进度接着做，或打开已完成的影展观看。"}
+                </span>
+              </span>
+              <span className="text-xs text-muted">{exhibitions.length} 场 ▾</span>
+            </summary>
+          <ul className="mt-4 space-y-2">
             {exhibitions.map((e) => {
               const photos = listPhotos(db, e.id);
               const confirmedCover = e.selection_confirmed_photo_ids?.find((pid) => photos.some((p) => p.id === pid));
@@ -204,6 +214,7 @@ export default function HomePage() {
               );
             })}
           </ul>
+          </details>
         </section>
       )}
 
@@ -213,9 +224,9 @@ export default function HomePage() {
             产品说明
           </Link>
           <span className="mx-2">·</span>
-          <span>本地优先 · 不默认上传原图</span>
+          <span>{isShowcaseSite ? "展示站点 · 影展内容经作者允许公开浏览" : "本地优先 · 不默认上传原图"}</span>
         </span>
-        <DemoResetButton />
+        {!isShowcaseSite && <DemoResetButton />}
       </footer>
     </main>
   );
