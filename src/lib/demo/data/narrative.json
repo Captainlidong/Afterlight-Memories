@@ -1,0 +1,75 @@
+{
+  "title": "在光线转弯之前",
+  "subtitle": "一组关于窗、背影与经过的照片",
+  "chapters": [
+    { "id": "chapter_01", "title": "进入", "photo_indices": [1, 2, 3, 4], "opening_index": 1, "closing_index": 4 },
+    { "id": "chapter_02", "title": "经过", "photo_indices": [6, 7, 8, 9, 11, 12, 15], "opening_index": 6, "closing_index": 15 },
+    { "id": "chapter_03", "title": "留下", "photo_indices": [16, 17, 18, 19, 20, 24], "opening_index": 16, "closing_index": 24, "turning_index": 16 }
+  ],
+  "tones": {
+    "documentary": {
+      "curatorial_statement": "这组照片记录窗、走廊与背影。人物多不正面朝向镜头，冷色光线贯穿整组，明亮广场作为结尾。",
+      "descriptions": [
+        "窗框、门洞与窗格光影先出现，人物尚未进入画面中心。",
+        "背影沿走廊、楼梯与操场移动，冷光书架与墙面穿插其间。",
+        "转角光束之后是反光、倒影与空椅，金色广场收束整组。"
+      ],
+      "placement_reasons": [
+        { "chapter": "chapter_01", "index": 1, "role": "opening", "reason": "窗框与走廊对称框景，晨光提供方向，适合作开场空间。" },
+        { "chapter": "chapter_01", "index": 4, "role": "closing", "reason": "拱门纵深与蓝调冷光叠加，作为进入章节的空间锚点收尾。" },
+        { "chapter": "chapter_02", "index": 6, "role": "opening", "reason": "背影沿走廊引导线前行，侧光勾勒轮廓，开启经过段落。" },
+        { "chapter": "chapter_02", "index": 15, "role": "closing", "reason": "柱列重复节奏与侧光阴影形成韵律，暖调提供光线变化。" },
+        { "chapter": "chapter_03", "index": 16, "role": "turning", "reason": "转角光束与明暗对比构成视觉转折，几何墙面引导视线。" },
+        { "chapter": "chapter_03", "index": 24, "role": "closing", "reason": "金色阳光暖调与整组冷调形成对比，大留白广场作结尾呼吸。" }
+      ]
+    },
+    "restrained": {
+      "curatorial_statement": "人物很少占据画面中心。窗与光线反复出现，像是在记录经过，而非停留。",
+      "descriptions": [
+        "先让空间出现，人物只作为尺度线索。",
+        "人物更接近，但仍未进入画面中心。",
+        "当人物离开，窗边光线仍保留观看方向。"
+      ],
+      "placement_reasons": [
+        { "chapter": "chapter_01", "index": 1, "role": "opening", "reason": "框景与晨光先建立空间，人物暂不出现，观看由此进入。" },
+        { "chapter": "chapter_01", "index": 4, "role": "closing", "reason": "拱门纵深把视线引向远处，作为进入段的安静收束。" },
+        { "chapter": "chapter_02", "index": 6, "role": "opening", "reason": "背影沿引导线前行，方向明确，开启经过的段落。" },
+        { "chapter": "chapter_02", "index": 15, "role": "closing", "reason": "柱列节奏在侧光下重复，暖调让经过段落在韵律中暂停。" },
+        { "chapter": "chapter_03", "index": 16, "role": "turning", "reason": "转角光束打破冷调连续性，像是一次观看的转弯。" },
+        { "chapter": "chapter_03", "index": 24, "role": "closing", "reason": "金色广场空场与冷调形成对比，让整组在明亮处收束。" }
+      ]
+    },
+    "poetic": {
+      "curatorial_statement": "光线在窗与墙之间转弯，人影像经过的影子，似乎只是空间短暂借用的轮廓。",
+      "descriptions": [
+        "空间先醒来，窗把光折成可以进入的形状。",
+        "背影走过走廊与操场，像逗号，把句子轻轻断开。",
+        "光在转角处停顿，倒影与空椅替人物继续留在画面里。"
+      ],
+      "placement_reasons": [
+        { "chapter": "chapter_01", "index": 1, "role": "opening", "reason": "晨光穿过窗框，像为整组推开第一扇门。" },
+        { "chapter": "chapter_01", "index": 4, "role": "closing", "reason": "拱门把蓝调时刻收进纵深，进入段落在远处轻轻合上。" },
+        { "chapter": "chapter_02", "index": 6, "role": "opening", "reason": "背影沿走廊前行，像一行尚未写完的句子。" },
+        { "chapter": "chapter_02", "index": 15, "role": "closing", "reason": "柱列在侧光下重复，如同节拍，让经过有了韵律。" },
+        { "chapter": "chapter_03", "index": 16, "role": "turning", "reason": "转角的光束像一次转折，把冷调的句子折向明亮。" },
+        { "chapter": "chapter_03", "index": 24, "role": "closing", "reason": "金色广场空无一物，仿佛整组在此呼出一口长气。" }
+      ]
+    },
+    "direct": {
+      "curatorial_statement": "17 张照片分三段：先空间，再人物经过，最后反光与空场。冷调为主，结尾转暖。",
+      "descriptions": [
+        "开场四张：窗框、门洞、窗格、拱门，都是空间。",
+        "中段七张：背影、剪影、小主体，加上冷光书架与柱列。",
+        "结尾六张：转角光束、三张反光、空椅，最后是金色广场。"
+      ],
+      "placement_reasons": [
+        { "chapter": "chapter_01", "index": 1, "role": "opening", "reason": "第一张用窗框晨光建立方向，直接作开场。" },
+        { "chapter": "chapter_01", "index": 4, "role": "closing", "reason": "拱门纵深收束开场段，引出冷光。" },
+        { "chapter": "chapter_02", "index": 6, "role": "opening", "reason": "走廊背影方向清楚，作中段第一张。" },
+        { "chapter": "chapter_02", "index": 15, "role": "closing", "reason": "柱列暖调结束中段，与冷调形成对比。" },
+        { "chapter": "chapter_03", "index": 16, "role": "turning", "reason": "转角光束是明暗转折点，放在结尾段开头。" },
+        { "chapter": "chapter_03", "index": 24, "role": "closing", "reason": "金色广场最亮且空，作整组最后一张。" }
+      ]
+    }
+  }
+}

@@ -1,0 +1,194 @@
+[
+  {
+    "index": 1,
+    "decision": "keep",
+    "score": 0.86,
+    "confidence": 0.8,
+    "reasons": ["窗框与走廊形成对称框景，晨光提供明确方向感", "冷调光线与整组基调一致，可作开场空间"],
+    "related_indices": []
+  },
+  {
+    "index": 2,
+    "decision": "keep",
+    "score": 0.82,
+    "confidence": 0.78,
+    "reasons": ["门洞框景配合明暗对比，庭院光斑形成视觉焦点", "与窗框晨光同属框景但视角不同，丰富开场层次"],
+    "related_indices": [1]
+  },
+  {
+    "index": 3,
+    "decision": "keep",
+    "score": 0.8,
+    "confidence": 0.76,
+    "reasons": ["窗格几何光影落在书桌与植物上，细节清晰", "提供整组中少见的近景静物视角"],
+    "related_indices": []
+  },
+  {
+    "index": 4,
+    "decision": "keep",
+    "score": 0.84,
+    "confidence": 0.8,
+    "reasons": ["拱门纵深与蓝调时刻冷光叠加，空间感强", "可作为冷光章节的空间锚点"],
+    "related_indices": [11, 12]
+  },
+  {
+    "index": 5,
+    "decision": "hold",
+    "score": 0.5,
+    "confidence": 0.55,
+    "reasons": ["柔焦与雨痕使主体不够清晰", "但车窗框景与反光提供整组唯一的雨天质感，建议暂缓由你决定"],
+    "related_indices": []
+  },
+  {
+    "index": 6,
+    "decision": "keep",
+    "score": 0.88,
+    "confidence": 0.82,
+    "reasons": ["人物背影沿走廊引导线前行，侧光勾勒轮廓", "背影与空间关系明确，是主题核心证据"],
+    "related_indices": [7, 8, 9]
+  },
+  {
+    "index": 7,
+    "decision": "keep",
+    "score": 0.9,
+    "confidence": 0.84,
+    "reasons": ["逆光剪影与大留白让人物先于细节出现", "窗边伫立姿态提供安静的情绪停顿"],
+    "related_indices": [6]
+  },
+  {
+    "index": 8,
+    "decision": "keep",
+    "score": 0.83,
+    "confidence": 0.78,
+    "reasons": ["楼梯扶手引导线配合纵深，背影上行有方向感", "与走廊背影构成不同空间的重复姿态"],
+    "related_indices": [6, 14]
+  },
+  {
+    "index": 9,
+    "decision": "keep",
+    "score": 0.85,
+    "confidence": 0.8,
+    "reasons": ["小主体置于大留白操场，黄昏暖调与冷调组形成对比", "人物与空间距离最远的一张，强化主题"],
+    "related_indices": [6, 24]
+  },
+  {
+    "index": 10,
+    "decision": "hold",
+    "score": 0.48,
+    "confidence": 0.5,
+    "reasons": ["荧光灯冷调与低饱和营造空旷感", "但课桌重复构图与书架冷光相近，独特性一般，建议暂缓"],
+    "related_indices": [11]
+  },
+  {
+    "index": 11,
+    "decision": "keep",
+    "score": 0.78,
+    "confidence": 0.74,
+    "reasons": ["书架过道纵深与冷光低饱和，建立冷调章节基调", "与蓝墙光斑共同支撑反复蓝色光线主题"],
+    "related_indices": [12, 4]
+  },
+  {
+    "index": 12,
+    "decision": "keep",
+    "score": 0.8,
+    "confidence": 0.76,
+    "reasons": ["极简墙面与大留白让蓝色光斑成为唯一主体", "冷调抽象视角，区别于其他空间照片"],
+    "related_indices": [11]
+  },
+  {
+    "index": 13,
+    "decision": "remove",
+    "score": 0.3,
+    "confidence": 0.6,
+    "reasons": ["低光下大面积阴影截断，暗部细节丢失", "与水洼倒影、玻璃幕墙的反光视角重复且技术更弱"],
+    "related_indices": [17, 18]
+  },
+  {
+    "index": 14,
+    "decision": "remove",
+    "score": 0.35,
+    "confidence": 0.58,
+    "reasons": ["一点透视引导线与楼梯上行、柱列光影高度重复", "顶灯均匀照明缺乏明暗起伏，整组贡献有限"],
+    "related_indices": [8, 15]
+  },
+  {
+    "index": 15,
+    "decision": "keep",
+    "score": 0.82,
+    "confidence": 0.78,
+    "reasons": ["柱列重复节奏与侧光阴影形成强烈韵律", "暖调在冷调组中提供光线变化"],
+    "related_indices": [16]
+  },
+  {
+    "index": 16,
+    "decision": "keep",
+    "score": 0.86,
+    "confidence": 0.8,
+    "reasons": ["转角光束与明暗对比构成天然视觉转折", "几何墙面引导视线，可作叙事中段转折"],
+    "related_indices": [15, 24]
+  },
+  {
+    "index": 17,
+    "decision": "keep",
+    "score": 0.79,
+    "confidence": 0.74,
+    "reasons": ["玻璃反光把天空与树枝叠成抽象冷调画面", "提供整组中独特的反射视角"],
+    "related_indices": [18, 19]
+  },
+  {
+    "index": 18,
+    "decision": "keep",
+    "score": 0.81,
+    "confidence": 0.76,
+    "reasons": ["水洼倒影与教学楼形成对称冷调构图", "反光主题中技术最稳定的一张"],
+    "related_indices": [17, 19]
+  },
+  {
+    "index": 19,
+    "decision": "keep",
+    "score": 0.76,
+    "confidence": 0.72,
+    "reasons": ["镜面框景反射窗与瓷砖，低饱和复古质感", "反光与框景两主题交汇，独特性高"],
+    "related_indices": [17]
+  },
+  {
+    "index": 20,
+    "decision": "keep",
+    "score": 0.8,
+    "confidence": 0.78,
+    "reasons": ["空椅与窗边外套在侧光下形成安静静物", "重复构图组中技术最佳，作为该视角代表保留"],
+    "related_indices": [21]
+  },
+  {
+    "index": 21,
+    "decision": "remove",
+    "score": 0.28,
+    "confidence": 0.62,
+    "reasons": ["与空椅窗边高度重复且压缩劣化、清晰度明显更低", "信息冗余，保留空椅窗边即可代表该视角"],
+    "related_indices": [20]
+  },
+  {
+    "index": 22,
+    "decision": "hold",
+    "score": 0.52,
+    "confidence": 0.55,
+    "reasons": ["运动模糊使清晰度偏低，技术上不够稳定", "但提供整组唯一的低角度黄昏人物瞬间，建议暂缓而非直接删除"],
+    "related_indices": []
+  },
+  {
+    "index": 23,
+    "decision": "hold",
+    "score": 0.5,
+    "confidence": 0.52,
+    "reasons": ["高光溢出较多，窗景细节可能过曝", "但高调窗帘营造明亮情绪，是否保留交由你判断"],
+    "related_indices": [24]
+  },
+  {
+    "index": 24,
+    "decision": "keep",
+    "score": 0.9,
+    "confidence": 0.85,
+    "reasons": ["金色阳光暖调与整组冷调形成强烈明亮转折", "大留白广场空场适合作叙事结尾前的呼吸"],
+    "related_indices": [16, 9]
+  }
+]

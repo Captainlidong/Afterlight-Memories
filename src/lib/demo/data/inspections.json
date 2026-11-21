@@ -1,0 +1,314 @@
+[
+  {
+    "index": 1,
+    "subjects": [
+      "窗",
+      "走廊",
+      "晨光"
+    ],
+    "composition_tags": [
+      "框景",
+      "对称",
+      "冷调"
+    ]
+  },
+  {
+    "index": 2,
+    "subjects": [
+      "门洞",
+      "庭院",
+      "光斑"
+    ],
+    "composition_tags": [
+      "框景",
+      "明暗对比"
+    ]
+  },
+  {
+    "index": 3,
+    "subjects": [
+      "窗格",
+      "书桌",
+      "植物",
+      "光束"
+    ],
+    "composition_tags": [
+      "框景",
+      "几何光影"
+    ]
+  },
+  {
+    "index": 4,
+    "subjects": [
+      "拱门",
+      "教学楼",
+      "蓝调时刻"
+    ],
+    "composition_tags": [
+      "框景",
+      "纵深",
+      "冷调"
+    ]
+  },
+  {
+    "index": 5,
+    "subjects": [
+      "车窗",
+      "雨滴",
+      "校园"
+    ],
+    "composition_tags": [
+      "框景",
+      "反光",
+      "柔焦"
+    ]
+  },
+  {
+    "index": 6,
+    "subjects": [
+      "人物背影",
+      "走廊",
+      "侧光"
+    ],
+    "composition_tags": [
+      "背影",
+      "引导线",
+      "冷调"
+    ]
+  },
+  {
+    "index": 7,
+    "subjects": [
+      "人物背影",
+      "窗",
+      "剪影"
+    ],
+    "composition_tags": [
+      "背影",
+      "逆光",
+      "留白"
+    ]
+  },
+  {
+    "index": 8,
+    "subjects": [
+      "人物背影",
+      "楼梯",
+      "扶手"
+    ],
+    "composition_tags": [
+      "背影",
+      "引导线",
+      "纵深"
+    ]
+  },
+  {
+    "index": 9,
+    "subjects": [
+      "人物背影",
+      "操场",
+      "黄昏"
+    ],
+    "composition_tags": [
+      "背影",
+      "大留白",
+      "小主体"
+    ]
+  },
+  {
+    "index": 10,
+    "subjects": [
+      "教室",
+      "课桌",
+      "荧光灯"
+    ],
+    "composition_tags": [
+      "冷调",
+      "重复",
+      "低饱和"
+    ]
+  },
+  {
+    "index": 11,
+    "subjects": [
+      "书架",
+      "过道",
+      "冷光"
+    ],
+    "composition_tags": [
+      "冷调",
+      "纵深",
+      "低饱和"
+    ]
+  },
+  {
+    "index": 12,
+    "subjects": [
+      "墙面",
+      "光斑"
+    ],
+    "composition_tags": [
+      "冷调",
+      "极简",
+      "大留白"
+    ]
+  },
+  {
+    "index": 13,
+    "subjects": [
+      "窗",
+      "夜色",
+      "反光"
+    ],
+    "composition_tags": [
+      "冷调",
+      "低光",
+      "反光"
+    ]
+  },
+  {
+    "index": 14,
+    "subjects": [
+      "走廊",
+      "门",
+      "顶灯"
+    ],
+    "composition_tags": [
+      "一点透视",
+      "引导线",
+      "重复"
+    ]
+  },
+  {
+    "index": 15,
+    "subjects": [
+      "柱列",
+      "阴影",
+      "侧光"
+    ],
+    "composition_tags": [
+      "重复",
+      "节奏",
+      "暖调"
+    ]
+  },
+  {
+    "index": 16,
+    "subjects": [
+      "走廊转角",
+      "光束",
+      "墙面"
+    ],
+    "composition_tags": [
+      "明暗对比",
+      "几何",
+      "转折"
+    ]
+  },
+  {
+    "index": 17,
+    "subjects": [
+      "玻璃",
+      "天空",
+      "树枝"
+    ],
+    "composition_tags": [
+      "反光",
+      "抽象",
+      "冷调"
+    ]
+  },
+  {
+    "index": 18,
+    "subjects": [
+      "水洼",
+      "倒影",
+      "教学楼"
+    ],
+    "composition_tags": [
+      "反光",
+      "对称",
+      "冷调"
+    ]
+  },
+  {
+    "index": 19,
+    "subjects": [
+      "镜子",
+      "窗",
+      "瓷砖"
+    ],
+    "composition_tags": [
+      "反光",
+      "框景",
+      "低饱和"
+    ]
+  },
+  {
+    "index": 20,
+    "subjects": [
+      "椅子",
+      "窗",
+      "外套"
+    ],
+    "composition_tags": [
+      "静物",
+      "侧光",
+      "重复构图"
+    ]
+  },
+  {
+    "index": 21,
+    "subjects": [
+      "椅子",
+      "窗",
+      "外套"
+    ],
+    "composition_tags": [
+      "静物",
+      "侧光",
+      "重复构图"
+    ]
+  },
+  {
+    "index": 22,
+    "subjects": [
+      "人物",
+      "门洞",
+      "黄昏"
+    ],
+    "composition_tags": [
+      "柔焦",
+      "运动模糊",
+      "低清晰"
+    ]
+  },
+  {
+    "index": 23,
+    "subjects": [
+      "窗",
+      "窗帘",
+      "高光"
+    ],
+    "composition_tags": [
+      "过曝",
+      "高光溢出",
+      "高调"
+    ]
+  },
+  {
+    "index": 24,
+    "subjects": [
+      "广场",
+      "树",
+      "金色阳光",
+      "天空"
+    ],
+    "composition_tags": [
+      "暖调",
+      "明亮",
+      "转折",
+      "大留白"
+    ]
+  }
+]

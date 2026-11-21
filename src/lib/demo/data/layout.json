@@ -1,0 +1,20 @@
+{
+  "sections": [
+    { "id": "hero", "type": "hero", "photo_index": 1, "height": "92vh", "caption_position": "bottom-left" },
+    { "id": "intro_chapter_01", "type": "chapter_intro", "chapter_id": "chapter_01", "spacing": "large" },
+    { "id": "pair_2_3", "type": "image_pair", "photo_indices": [2, 3], "ratio": "60-40", "gap": "medium" },
+    { "id": "single_4", "type": "single_image", "photo_index": 4, "size": "large", "spacing": "medium" },
+    { "id": "intro_chapter_02", "type": "chapter_intro", "chapter_id": "chapter_02", "spacing": "large" },
+    { "id": "single_6", "type": "single_image", "photo_index": 6, "size": "large", "spacing": "medium" },
+    { "id": "group_7_8_9", "type": "image_group", "photo_indices": [7, 8, 9], "gap": "small" },
+    { "id": "pair_11_12", "type": "image_pair", "photo_indices": [11, 12], "ratio": "60-40", "gap": "medium" },
+    { "id": "single_15", "type": "single_image", "photo_index": 15, "size": "large", "spacing": "medium" },
+    { "id": "intro_chapter_03", "type": "chapter_intro", "chapter_id": "chapter_03", "spacing": "large" },
+    { "id": "spacer_16", "type": "spacer", "size": "large" },
+    { "id": "single_16", "type": "single_image", "photo_index": 16, "size": "large", "spacing": "large" },
+    { "id": "group_17_18_19", "type": "image_group", "photo_indices": [17, 18, 19], "gap": "small" },
+    { "id": "single_20", "type": "single_image", "photo_index": 20, "size": "medium", "spacing": "medium" },
+    { "id": "statement", "type": "statement" },
+    { "id": "ending", "type": "ending", "photo_indices": [24] }
+  ]
+}
