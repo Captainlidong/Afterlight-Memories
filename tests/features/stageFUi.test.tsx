@@ -130,7 +130,8 @@ describe("Stage F AI status panel (static rendering)", () => {
     const html = render();
     expect(state.swr).toHaveBeenCalledWith("/api/ai/status", state.jsonFetcher, { revalidateOnFocus: false, shouldRetryOnError: false });
     expect(html).toContain("<summary");
-    expect(html).toContain("AI 使用说明与连接状态");
+    expect(html).toContain("连接详情与测试");
+    expect(html).not.toContain("AI 使用说明与连接状态");
     expect(html).toContain("本地演示始终可用");
     expect(html).toContain("两个固定探测");
     expect(html).toContain("最多 2 次模型调用");
@@ -143,14 +144,22 @@ describe("Stage F AI status panel (static rendering)", () => {
     expect(fetch).not.toHaveBeenCalled();
   });
 
+  it("默认视图一句话状态，不把配置教程摊在页面上（用户界面非开发者控制台）", () => {
+    const html = render();
+    expect(html).toContain("AI 服务已配置；建议先在下方「连接详情与测试」里运行一次连接测试。");
+    expect(html).not.toContain(".env.local");
+    expect(html).not.toContain("AI_TEXT_MODEL");
+    expect(html).not.toContain("AFTERLIGHT_MODE");
+  });
+
   it("shows setup/restart guidance without credential or endpoint inputs", () => {
     state.status!.connection = connection({ kind: "not_configured", label: "AI 未配置", missing: ["AI_API_KEY", "AI_VISION_MODEL"], canTest: false });
     const html = render();
-    expect(html).toContain("AI 未配置");
+    expect(html).toContain("AI 未配置：可以先创建影展和使用本地演示。");
     expect(html).toContain("缺少配置：AI_API_KEY、AI_VISION_MODEL");
-    expect(html).toContain("服务端 .env.local");
-    expect(html).toContain("重启服务并重新加载状态");
-    expect(html).toContain("未设置时复用视觉模型");
+    expect(html).toContain("docs/ai-setup.md");
+    expect(html).not.toContain("服务端 .env.local 配置");
+    expect(html).not.toContain("未设置时复用视觉模型");
     expect(html.match(/<input/g)).toHaveLength(1);
     expect(checkboxes(html)[0]).toContain("disabled");
     expect(html).toContain("本地演示始终可用");

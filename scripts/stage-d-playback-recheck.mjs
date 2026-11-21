@@ -32,7 +32,8 @@ class CDP {
       if (m.id) {
         const p = this.pending.get(m.id); if (!p) return;
         this.pending.delete(m.id); clearTimeout(p.timer);
-        m.error ? p.reject(new Error(JSON.stringify(m.error))) : p.resolve(m.result);
+        if (m.error) p.reject(new Error(JSON.stringify(m.error)));
+        else p.resolve(m.result);
       } else for (const f of this.handlers.get(m.method) || []) Promise.resolve().then(() => f(m.params, m.sessionId)).catch(err => report.failures.push({ event: m.method, error: String(err) }));
     });
     const rejectPending = error => { for (const p of this.pending.values()) { clearTimeout(p.timer); p.reject(error); } this.pending.clear(); };

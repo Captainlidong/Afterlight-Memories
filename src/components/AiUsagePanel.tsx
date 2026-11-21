@@ -97,14 +97,21 @@ function useAiConnection() {
 
 export function AiUsagePanel() {
   const { data, error, mutate, confirmed, setConfirmed, pending, testError, canTest, testConnection } = useAiConnection();
+  const connection = data?.connection;
+  const headline = error
+    ? "AI 状态暂时无法加载；本地演示不受影响。"
+    : !connection
+      ? "正在获取 AI 状态…"
+      : headlineFor(connection);
 
   return (
-    <aside className="space-y-3 rounded-lg border border-ink-line p-4 text-xs leading-relaxed text-muted">
-      <p>本地演示始终可用，无需模型配置，也不会向模型服务发送照片。</p>
+    <aside className="space-y-2 rounded-lg border border-ink-line p-4 text-xs leading-relaxed text-muted">
+      <p role="status">本地演示始终可用，无需模型配置，也不会向模型服务发送照片。</p>
+      <p className="text-text">{headline}</p>
       <details>
-        <summary className="cursor-pointer text-sm text-text">AI 使用说明与连接状态</summary>
+        <summary className="cursor-pointer">连接详情与测试</summary>
         <div className="mt-4 space-y-4">
-          <p>查看状态不会调用模型。AI 需要有效配置和本次影展的外发授权，不会自动降级为演示。</p>
+          <p>查看详情不会调用模型。AI 生成需要有效配置和本次影展的外发授权，不会自动降级为演示。</p>
           {error ? (
             <div role="alert" className="space-y-2">
               <p>无法加载 AI 连接状态；仍可创建影展、上传照片或使用本地演示。</p>
@@ -115,11 +122,9 @@ export function AiUsagePanel() {
           ) : (
             <p role="status">正在加载 AI 连接状态…</p>
           )}
-          <div className="space-y-2">
-            <p>请在服务端 .env.local 配置 AI_BASE_URL、AI_API_KEY、AI_VISION_MODEL，然后重启服务并重新加载状态。本页不接收密钥或自定义服务地址。</p>
-            <p>AI_TEXT_MODEL 可选，未设置时复用视觉模型；AFTERLIGHT_MODE=ai 仅设置新影展的默认模式，不代表已授权或连接可用。</p>
-            <p>配置缺失、无效或尚未授权时，可以先创建并上传照片，但暂时不能进行 AI 生成。</p>
-          </div>
+          {connection?.kind === "not_configured" && (
+            <p>配置方法见项目文档 docs/ai-setup.md：在服务端设置模型服务地址、密钥和视觉模型名后重启服务。本页不接收密钥。</p>
+          )}
           <label className="flex cursor-pointer items-start gap-3">
             <input
               type="checkbox"
@@ -141,6 +146,26 @@ export function AiUsagePanel() {
   );
 }
 
+/** 一句话用户视角状态；不把"已填写配置"冒充为可用，不暴露技术字段名。 */
+function headlineFor(connection: AiConnectionStatus): string {
+  switch (connection.kind) {
+    case "test_succeeded":
+      return "AI 服务已就绪（最近一次连接测试通过）。";
+    case "configured_untested":
+      return "AI 服务已配置；建议先在下方「连接详情与测试」里运行一次连接测试。";
+    case "configured_with_issues":
+      return "AI 配置存在无效项，暂时不能生成；可展开下方详情查看。";
+    case "connection_error":
+      return "AI 连接异常：可展开下方详情查看原因。";
+    case "not_configured":
+      return "AI 未配置：可以先创建影展和使用本地演示。";
+    case "local_demo":
+      return "当前为本地演示模式，不会向模型服务发送照片。";
+  }
+}
+
+const friendlyTime = (iso: string) => `${iso.slice(0, 10)} ${iso.slice(11, 19)} UTC`;
+
 function ConnectionDetails({ connection }: { connection: AiConnectionStatus }) {
   const { text, vision } = connection.capabilities;
   return (
@@ -157,7 +182,7 @@ function ConnectionDetails({ connection }: { connection: AiConnectionStatus }) {
       {text.state === "succeeded" && vision.state === "succeeded" && (
         <p>文本与视觉探测均已通过；仅代表测试时的连接情况，不保证每次生成成功。</p>
       )}
-      {connection.lastTestAt && <p>最近测试：<time dateTime={connection.lastTestAt}>{connection.lastTestAt}</time></p>}
+      {connection.lastTestAt && <p>最近测试：<time dateTime={connection.lastTestAt}>{friendlyTime(connection.lastTestAt)}</time></p>}
     </div>
   );
 }
@@ -169,7 +194,7 @@ function Capability({ label, capability }: { label: string; capability: AiConnec
     <div>
       <p>{label}探测：{CAPABILITY_LABELS[capability.state]}</p>
       {capability.message && <p>{capability.message}</p>}
-      {capability.at && <p><time dateTime={capability.at}>{capability.at}</time></p>}
+      {capability.at && <p><time dateTime={capability.at}>{friendlyTime(capability.at)}</time></p>}
     </div>
   );
 }
