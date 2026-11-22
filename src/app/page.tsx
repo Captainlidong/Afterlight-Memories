@@ -140,7 +140,7 @@ export default async function HomePage() {
             // eslint-disable-next-line @next/next/no-img-element
             <img
               key={name}
-              src={`/demo/photos/${name}`}
+              src={apiUrl(`/demo/photos/${name}`)}
               alt={`示例照片 ${i + 1}`}
               loading={i === 0 ? "eager" : "lazy"}
               className={`h-32 min-w-0 flex-1 rounded-sm object-cover sm:h-40 ${i > 3 ? "hidden sm:block" : ""}`}

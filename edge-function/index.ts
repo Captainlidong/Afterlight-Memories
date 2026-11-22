@@ -61,12 +61,14 @@ Deno.serve(async (req: Request): Promise<Response> => {
 
   let upstreamRes: Response;
   try {
+    // AbortSignal.timeout 需较新运行时；不支持时不设超时（转发语义不受影响）。
+    const signal = typeof AbortSignal !== "undefined" && "timeout" in AbortSignal ? AbortSignal.timeout(120_000) : undefined;
     upstreamRes = await fetch(upstream, {
       method: req.method,
       headers,
       body: req.body,
       redirect: "manual",
-      signal: AbortSignal.timeout(120_000),
+      ...(signal ? { signal } : {}),
     });
   } catch {
     return json(502, {
@@ -76,7 +78,14 @@ Deno.serve(async (req: Request): Promise<Response> => {
 
   const resHeaders = new Headers();
   for (const [name, value] of upstreamRes.headers) {
-    if (!HOP_BY_HOP.has(name.toLowerCase())) resHeaders.append(name, value);
+    if (!HOP_BY_HOP.has(name.toLowerCase()) && name.toLowerCase() !== "set-cookie") {
+      resHeaders.append(name, value);
+    }
+  }
+  // Set-Cookie 逐条透传：Headers 迭代会把多条 Cookie 合并成逗号串导致损坏，
+  // 用 getSetCookie() 保留每条的独立性与属性（HttpOnly / SameSite / Secure / Max-Age）。
+  for (const cookie of upstreamRes.headers.getSetCookie()) {
+    resHeaders.append("set-cookie", cookie);
   }
   return new Response(upstreamRes.body, { status: upstreamRes.status, headers: resHeaders });
 });

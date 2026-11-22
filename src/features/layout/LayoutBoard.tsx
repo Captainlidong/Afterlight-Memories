@@ -69,7 +69,7 @@ export function LayoutBoard({ exhibitionId }: { exhibitionId: string }) {
     setBusy(true);
     setError(null);
     try {
-      const res = await fetch(url, init);
+      const res = await fetch(apiUrl(url), init);
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error?.message ?? failMsg);
       await refresh();
@@ -230,7 +230,7 @@ export function LayoutBoard({ exhibitionId }: { exhibitionId: string }) {
             >
               <iframe
                 key={`${device}-${layout.updated_at}`}
-                src={`/exhibition/${exhibitionId}?embed=1`}
+                src={apiUrl(`/exhibition/${exhibitionId}?embed=1`)}
                 title="影展预览"
                 className="h-full w-full border-0"
               />

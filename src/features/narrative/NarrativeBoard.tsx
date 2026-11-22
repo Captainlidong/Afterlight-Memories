@@ -66,7 +66,7 @@ export function NarrativeBoard({ exhibitionId }: { exhibitionId: string }) {
       setBusy(true);
       setError(null);
       try {
-        const res = await fetch(url, init);
+        const res = await fetch(apiUrl(url), init);
         const data = await res.json();
         if (!res.ok) throw new Error(data?.error?.message ?? failMsg);
         await Promise.all([mutateNarrative(), mutateStatus(), mutateVersions()]);

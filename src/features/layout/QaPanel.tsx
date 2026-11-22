@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { mutate } from "swr";
+import { apiUrl } from "@/lib/appBase";
 import { useQa } from "@/lib/hooks";
 import type { LayoutDTO, QaDTO } from "@/types";
 import type { QaIssueT } from "@/lib/agents/schemas";
@@ -56,7 +57,7 @@ export function QaPanel({ exhibitionId, layout, running }: { exhibitionId: strin
     setBusy(key);
     setError(null);
     try {
-      const res = await fetch(url, { method: "POST", headers: JSON_HEADERS, body: JSON.stringify(body ?? {}) });
+      const res = await fetch(apiUrl(url), { method: "POST", headers: JSON_HEADERS, body: JSON.stringify(body ?? {}) });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error?.message ?? "操作失败");
       await Promise.all([

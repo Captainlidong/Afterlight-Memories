@@ -39,7 +39,7 @@ export function StaleBanner({ exhibitionId }: { exhibitionId: string }) {
     setBusy(true);
     setError(null);
     try {
-      const res = await fetch(url, {
+      const res = await fetch(apiUrl(url), {
         method: "POST",
         headers: JSON_HEADERS,
         body: JSON.stringify(body ?? {}),

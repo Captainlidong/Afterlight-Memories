@@ -139,7 +139,7 @@ export function SelectionBoard({ exhibitionId }: { exhibitionId: string }) {
       setError(null);
       try {
         const res = await fetch(
-          `/api/exhibitions/${exhibitionId}/photos/${photoId}/decision`,
+          apiUrl(`/api/exhibitions/${exhibitionId}/photos/${photoId}/decision`),
           {
             method: "PATCH",
             headers: JSON_HEADERS,

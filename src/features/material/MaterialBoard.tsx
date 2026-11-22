@@ -30,7 +30,8 @@ export type DeleteOutcome = { ok: boolean; message: string | null };
 export async function deletePhotoRequest(
   exhibitionId: string,
   photoId: string,
-  fetchImpl: typeof fetch = fetch,
+  // 默认实现经 apiUrl 拼接基址（边缘代理形态）；调用点只会传字符串路径，收窄安全。
+  fetchImpl: typeof fetch = ((url: string, init?: RequestInit) => fetch(apiUrl(url), init)) as typeof fetch,
 ): Promise<DeleteOutcome> {
   try {
     const res = await fetchImpl(`/api/exhibitions/${exhibitionId}/photos/${photoId}`, { method: "DELETE" });

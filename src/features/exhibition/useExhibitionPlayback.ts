@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState, useSyncExternalStore } from "react";
+import { apiUrl } from "@/lib/appBase";
 import {
   PLAYBACK_SPEEDS,
   PLAYBACK_TRANSITION_MS,
@@ -144,7 +145,7 @@ export function useExhibitionPlayback({
         if (!e) continue;
         const variant = r.stops[e.stopIndex].type === "image_group" ? "thumb" : "original";
         for (const pid of e.photoIds) {
-          const src = `/api/files/${exhibitionId}/${pid}?variant=${variant}`;
+          const src = apiUrl(`/api/files/${exhibitionId}/${pid}?variant=${variant}`);
           if (preloadedRef.current.has(src)) continue;
           preloadedRef.current.add(src);
           const img = new Image();
