@@ -8,7 +8,7 @@ import { STAGE_META } from "@/lib/orchestrator/stateMachine";
 import type { AiConnectionStatus } from "@/lib/ai/status";
 import { AI_ERROR_GUIDANCE } from "@/lib/ai/feedback";
 import type { AiErrorClass } from "@/lib/ai/errors";
-import { isPublicVisitorMode } from "@/lib/visitor/cookie";
+import { isPublicVisitorClient } from "@/lib/visitor/cookie";
 import { aiWindowNow } from "@/lib/ai/schedule";
 
 export function ExhibitionUsage({ exhibitionId }: { exhibitionId: string }) {
@@ -102,7 +102,7 @@ export function AiUsagePanel() {
   const connection = data?.connection;
 
   // 公网完整版：访客看到时段状态与体验规则，不提供连接测试（作者功能）。
-  if (isPublicVisitorMode()) {
+  if (isPublicVisitorClient()) {
     const win = aiWindowNow();
     return (
       <aside className="space-y-2 rounded-lg border border-ink-line p-4 text-xs leading-relaxed text-muted">

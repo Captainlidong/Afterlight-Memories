@@ -12,6 +12,7 @@ import { FieldEditor } from "./FieldEditor";
 import { ChapterTree } from "./ChapterTree";
 import { useSaveBarrier } from "./useSaveBarrier";
 import type { NarrativeEditT, ToneT } from "@/lib/agents/schemas";
+import { requestId } from "@/lib/uuid";
 
 const JSON_HEADERS = { "content-type": "application/json" };
 
@@ -82,7 +83,7 @@ export function NarrativeBoard({ exhibitionId }: { exhibitionId: string }) {
   const generate = useCallback(
     () => run(
       `/api/exhibitions/${exhibitionId}/runs/narrative`,
-      { method: "POST", headers: JSON_HEADERS, body: JSON.stringify({ request_id: crypto.randomUUID() }) },
+      { method: "POST", headers: JSON_HEADERS, body: JSON.stringify({ request_id: requestId() }) },
       "启动叙事生成失败",
     ),
     [exhibitionId, run],
@@ -91,7 +92,7 @@ export function NarrativeBoard({ exhibitionId }: { exhibitionId: string }) {
     () =>
       run(
         `/api/exhibitions/${exhibitionId}/narrative/regenerate`,
-        { method: "POST", headers: JSON_HEADERS, body: JSON.stringify({ scope, request_id: crypto.randomUUID() }) },
+        { method: "POST", headers: JSON_HEADERS, body: JSON.stringify({ scope, request_id: requestId() }) },
         "重新生成失败",
       ),
     [exhibitionId, run, scope],
@@ -100,7 +101,7 @@ export function NarrativeBoard({ exhibitionId }: { exhibitionId: string }) {
     (tone: ToneT) =>
       run(
         `/api/exhibitions/${exhibitionId}/runs/narrative`,
-        { method: "POST", headers: JSON_HEADERS, body: JSON.stringify({ tone, request_id: crypto.randomUUID() }) },
+        { method: "POST", headers: JSON_HEADERS, body: JSON.stringify({ tone, request_id: requestId() }) },
         "切换语气失败",
       ),
     [exhibitionId, run],

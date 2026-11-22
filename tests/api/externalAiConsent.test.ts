@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { NextRequest } from "next/server";
 import type { DatabaseSync } from "node:sqlite";
 import { createDb } from "@/lib/db/client";
 import { createExhibition, getExhibition } from "@/lib/db/repos";
@@ -35,8 +36,13 @@ describe("外部处理授权", () => {
     expect(() => assertExternalSendAllowed(db, { purpose: "vision", scopeType: "workflow", scopeId: "wf", exhibitionId: id, promptVersion: "v1", schemaVersion: "v1" })).toThrow();
     expect((await consent({ allow_external_ai: true })).status).toBe(409);
   });
-  it("显式重新授权；拒绝跨域和任意服务参数", async () => {
-    expect((await consent({ allow_external_ai: false }, "https://evil.example")).status).toBe(403);
+  it("显式重新授权；跨域由 proxy 统一守卫拒绝；任意服务参数拒绝", async () => {
+    // 跨域拒绝收归 proxy 统一守卫（本机模式 = assertLocalMutation；公网模式 = 访客守卫）
+    const { proxy } = await import("@/proxy");
+    const crossOrigin = await proxy(new NextRequest(`http://localhost:3000/api/exhibitions/${id}/external-ai`, {
+      method: "PATCH", headers: { origin: "https://evil.example", "content-type": "application/json" }, body: JSON.stringify({ allow_external_ai: false }),
+    }));
+    expect(crossOrigin.status).toBe(403);
     expect(getExhibition(db, id)!.allow_external_ai).toBe(true);
     expect((await consent({ allow_external_ai: false, apiKey: "forbidden" })).status).toBe(400);
     expect((await consent({ allow_external_ai: false })).status).toBe(200);

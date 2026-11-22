@@ -66,8 +66,9 @@ export function markVisitorAiExperience(db: DatabaseSync, req: Request, exhibiti
 /** 上传磁盘防护：单会话总量 ≤60MB；全站照片总量水位 ≤400MB（平台磁盘 512MB）。 */
 export function assertVisitorUploadDiskCap(db: DatabaseSync, req?: Request): void {
   if (!isVisitorMode()) return;
+  const watermarkMb = Number(process.env.AFTERLIGHT_DISK_WATERMARK_MB ?? "400");
   const global = db.prepare("SELECT COALESCE(SUM(file_size),0) AS s FROM photo_assets").get() as { s: number };
-  if (global.s > 400 * 1024 * 1024) {
+  if (global.s > watermarkMb * 1024 * 1024) {
     throw new ApiError(503, "disk_full", "站点存储空间已满，请稍后再试或联系作者清理。");
   }
   const sid = req ? resolveVisitorSid(req) : null;

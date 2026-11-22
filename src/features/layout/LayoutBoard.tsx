@@ -10,6 +10,7 @@ import { AgentTrace } from "@/components/AgentTrace";
 import { LoadError } from "@/components/LoadError";
 import { ExportButtons } from "@/components/ExportButtons";
 import { QaPanel } from "./QaPanel";
+import { requestId } from "@/lib/uuid";
 
 const JSON_HEADERS = { "content-type": "application/json" };
 
@@ -79,7 +80,7 @@ export function LayoutBoard({ exhibitionId }: { exhibitionId: string }) {
   }
 
   const relayout = () =>
-    run(`/api/exhibitions/${exhibitionId}/runs/layout`, { method: "POST", headers: JSON_HEADERS, body: JSON.stringify({ request_id: crypto.randomUUID() }) }, "布局生成失败");
+    run(`/api/exhibitions/${exhibitionId}/runs/layout`, { method: "POST", headers: JSON_HEADERS, body: JSON.stringify({ request_id: requestId() }) }, "布局生成失败");
 
   async function chooseTemplate(t: TemplateT) {
     if (t === exh?.template) return;
@@ -93,7 +94,7 @@ export function LayoutBoard({ exhibitionId }: { exhibitionId: string }) {
       });
       if (!patch.ok) throw new Error((await patch.json())?.error?.message ?? "模板切换失败");
       if (narrative) {
-        const res = await fetch(`/api/exhibitions/${exhibitionId}/runs/layout`, { method: "POST", headers: JSON_HEADERS, body: JSON.stringify({ request_id: crypto.randomUUID() }) });
+        const res = await fetch(`/api/exhibitions/${exhibitionId}/runs/layout`, { method: "POST", headers: JSON_HEADERS, body: JSON.stringify({ request_id: requestId() }) });
         if (!res.ok) throw new Error((await res.json())?.error?.message ?? "布局生成失败");
       }
       await refresh();

@@ -13,6 +13,7 @@ import { LoadError } from "@/components/LoadError";
 import { Badge, Button, EmptyState, Spinner } from "@/components/ui";
 import type { PhotoAsset, CurationDecisionDTO } from "@/types";
 import type { PhotoInspectionT, UserDecisionT } from "@/lib/agents/schemas";
+import { requestId } from "@/lib/uuid";
 
 type Tab = "keep" | "hold" | "remove";
 type BatchAction = "set_decision" | "restore_ai_suggestion";
@@ -118,7 +119,7 @@ export function SelectionBoard({ exhibitionId }: { exhibitionId: string }) {
       const res = await fetch(`/api/exhibitions/${exhibitionId}/runs/select`, {
         method: "POST",
         headers: JSON_HEADERS,
-        body: JSON.stringify({ request_id: crypto.randomUUID() }),
+        body: JSON.stringify({ request_id: requestId() }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error?.message ?? "启动筛选失败");
@@ -172,7 +173,7 @@ export function SelectionBoard({ exhibitionId }: { exhibitionId: string }) {
             ...(decision ? { decision } : {}),
             include_must_keep: includeMustKeep,
             expected_revision: status.exhibition.input_revision,
-            request_id: crypto.randomUUID(),
+            request_id: requestId(),
           }),
         });
         const data = await res.json();
@@ -246,7 +247,7 @@ export function SelectionBoard({ exhibitionId }: { exhibitionId: string }) {
             expected_revision: status.exhibition.input_revision,
             hold_policy: holdPolicy,
             discover_motifs: true,
-            request_id: crypto.randomUUID(),
+            request_id: requestId(),
           }),
         });
         const data = await res.json();

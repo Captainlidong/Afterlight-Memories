@@ -2,7 +2,6 @@ import { z } from "zod";
 import { getDb } from "@/lib/db/client";
 import { getExhibition, setExternalAiConsent } from "@/lib/db/repos";
 import { assertWritable } from "@/lib/orchestrator/guard";
-import { assertLocalMutation } from "@/lib/api/localRequest";
 import { ApiError, handler, ok } from "@/lib/api/errors";
 
 import { requireVisitorMutation } from "@/lib/visitor/access";
@@ -10,7 +9,6 @@ export const runtime = "nodejs";
 const Input = z.object({ allow_external_ai: z.boolean() }).strict();
 
 export const PATCH = handler(async (req: Request, { params }: { params: Promise<{ id: string }> }) => {
-  assertLocalMutation(req);
   const body = Input.parse(await req.json());
   const { id } = await params;
   const db = getDb();

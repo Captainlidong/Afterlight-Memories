@@ -8,6 +8,11 @@ export function isPublicVisitorMode(): boolean {
   return process.env.AFTERLIGHT_PUBLIC === "1";
 }
 
+/** 客户端组件用：构建时经 NEXT_PUBLIC_ 注入浏览器包（非密钥，仅 UI 形态标志）。 */
+export function isPublicVisitorClient(): boolean {
+  return process.env.NEXT_PUBLIC_AFTERLIGHT_PUBLIC === "1";
+}
+
 export function mintVisitorSid(): string {
   const bytes = new Uint8Array(12);
   globalThis.crypto.getRandomValues(bytes);

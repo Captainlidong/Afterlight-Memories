@@ -15,8 +15,14 @@ export interface VisitorContext {
   setCookie: string | null;
 }
 
-export function visitorCookieHeader(sid: string): string {
-  return visitorSetCookie(sid, visitorTtlMinutes() + 5, process.env.NODE_ENV === "production");
+function requestIsSecure(req: Request): boolean {
+  // 公网部署常见两种形态：直连 http://IP（Secure 必须为 false，否则浏览器丢弃 Cookie）与 HTTPS 反代（读取转发头）
+  if (req.headers.get("x-forwarded-proto") === "https") return true;
+  try { return new URL(req.url).protocol === "https:"; } catch { return false; }
+}
+
+export function visitorCookieHeader(sid: string, req: Request): string {
+  return visitorSetCookie(sid, visitorTtlMinutes() + 5, requestIsSecure(req));
 }
 
 /** 从请求解析会话；不存在/无效返回 null（由调用方决定 401 或创建）。 */
@@ -61,7 +67,7 @@ export function resolveVisitorSessionForCreate(db: DatabaseSync, req: Request): 
   let setCookie: string | null = null;
   if (!sid) {
     sid = mintSid();
-    setCookie = visitorCookieHeader(sid);
+    setCookie = visitorCookieHeader(sid, req);
   }
   getOrCreateVisitorSession(db, sid);
   return { sid, setCookie };

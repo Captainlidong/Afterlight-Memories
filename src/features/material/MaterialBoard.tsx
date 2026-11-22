@@ -13,6 +13,7 @@ import { LoadError } from "@/components/LoadError";
 import { Badge, Button, EmptyState, Spinner } from "@/components/ui";
 import type { PhotoAsset } from "@/types";
 import type { PhotoInspectionT } from "@/lib/agents/schemas";
+import { requestId } from "@/lib/uuid";
 
 function fmtSize(bytes: number): string {
   if (bytes >= 1024 * 1024) return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
@@ -186,7 +187,7 @@ export function MaterialBoard({
               去确认选片 →
             </Link>
           ) : (
-            <Button onClick={() => triggerIngest(crypto.randomUUID())} disabled={!canAnalyze}>
+            <Button onClick={() => triggerIngest(requestId())} disabled={!canAnalyze}>
               {running ? <Spinner label="分析中" /> : busy ? <Spinner label="启动中" /> : "分析照片并推荐选片"}
             </Button>
           )}

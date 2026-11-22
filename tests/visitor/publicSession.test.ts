@@ -213,7 +213,33 @@ describe("AI 体验三层额度", () => {
   });
 });
 
-describe("DeepSeek 空闲时段调度", () => {
+describe('DeepSeek 空闲时段调度', () => {
+  it('评审期窗口内全天候开放（含工作日高峰时刻），窗口外恢复常态', () => {
+    vi.stubEnv('AI_REVIEW_WINDOW', '2026-12-01~2026-12-07');
+    // 2026-12-01 为周二，北京 10:00 属高峰时刻，但处于评审期 → 放行
+    const inWindow = aiWindowNow(new Date('2026-12-01T02:00:00Z'));
+    expect(inWindow.allowed).toBe(true);
+    expect(inWindow.message).toContain('评审期');
+    expect(inWindow.message).toContain('2026-12-01');
+    // 窗口首日 00:00 前一分钟（11-30 北京 23:59）不在窗口 → 按普通工作日判断（23:59 非高峰 → 可用）
+    const before = aiWindowNow(new Date('2026-11-30T15:59:00Z'));
+    expect(before.allowed).toBe(true);
+    // 窗口结束次日（12-08 周二北京 10:00 高峰）恢复常态拒绝
+    const after = aiWindowNow(new Date('2026-12-08T02:00:00Z'));
+    expect(after.allowed).toBe(false);
+    vi.unstubAllEnvs();
+  });
+
+  it('评审期不豁免额度约束（照片超上限仍拒绝）', () => {
+    vi.stubEnv('AI_REVIEW_WINDOW', '2026-12-01~2026-12-07');
+    const db = freshDb();
+    getOrCreateVisitorSession(db, sid);
+    const exh = createExhibition(db, { allow_external_ai: true } as never, 'ai', { sessionId: sid });
+    for (let i = 0; i < 11; i++) insertPhoto(db, exh.id);
+    expect(() => assertVisitorAiExperienceStart(db, visitorReq(), exh.id, () => aiWindowNow(new Date('2026-12-02T02:00:00Z')))).toThrow(/最多分析 10 张/);
+    vi.unstubAllEnvs();
+  });
+
   // 2026-11-23 为周一。UTC+8 换算：02:00Z = 北京 10:00（高峰）。
   it("工作日高峰拒绝并给出恢复提示", () => {
     const w = aiWindowNow(new Date("2026-11-23T02:00:00Z"));

@@ -7,6 +7,7 @@ import { mutate } from "swr";
 import { useStatus } from "@/lib/hooks";
 import { STAGE_META, stagesBetween, stageIndex, type Stage } from "@/lib/orchestrator/stateMachine";
 import { Button, Spinner } from "@/components/ui";
+import { requestId } from "@/lib/uuid";
 
 const JSON_HEADERS = { "content-type": "application/json" };
 
@@ -62,7 +63,7 @@ export function StaleBanner({ exhibitionId }: { exhibitionId: string }) {
         body: JSON.stringify({ mode: "demo" }),
       });
       if (!patch.ok) throw new Error((await patch.json())?.error?.message ?? "模式切换失败");
-      await post(`/api/exhibitions/${exhibitionId}/runs/ingest`, { request_id: crypto.randomUUID() });
+      await post(`/api/exhibitions/${exhibitionId}/runs/ingest`, { request_id: requestId() });
     } catch (e) {
       setError(e instanceof Error ? e.message : "模式切换失败");
     } finally {

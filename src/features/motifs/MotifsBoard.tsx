@@ -9,6 +9,7 @@ import { AgentTrace } from "@/components/AgentTrace";
 import { LoadError } from "@/components/LoadError";
 import { Badge, Button, EmptyState, Spinner } from "@/components/ui";
 import type { PhotoAsset, MotifDTO } from "@/types";
+import { requestId } from "@/lib/uuid";
 
 export function MotifsBoard({ exhibitionId }: { exhibitionId: string }) {
   const [headingRef, landingMessage] = useLandingFocus(exhibitionId, "选择主题");
@@ -63,7 +64,7 @@ export function MotifsBoard({ exhibitionId }: { exhibitionId: string }) {
   const discover = useCallback(
     () => run(
       `/api/exhibitions/${exhibitionId}/runs/motifs`,
-      { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ request_id: crypto.randomUUID() }) },
+      { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ request_id: requestId() }) },
       "启动主题发现失败",
     ),
     [exhibitionId, run],
@@ -103,7 +104,7 @@ export function MotifsBoard({ exhibitionId }: { exhibitionId: string }) {
       const res = await fetch(`/api/exhibitions/${exhibitionId}/runs/narrative`, {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ request_id: crypto.randomUUID() }),
+        body: JSON.stringify({ request_id: requestId() }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error?.message ?? "生成影展失败");
