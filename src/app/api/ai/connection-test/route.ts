@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { ApiError, handler, ok } from "@/lib/api/errors";
 import { assertLocalMutation } from "@/lib/api/localRequest";
+import { isPublicVisitorMode } from "@/lib/visitor/cookie";
 import { getDb } from "@/lib/db/client";
 import { loadAiConfig } from "@/lib/ai/config";
 import { runAiConnectionTest } from "@/lib/ai/connectionTest";
@@ -12,6 +13,9 @@ const confirmation = z.object({ confirmed: z.literal(true) }).strict();
 
 export const POST = handler(async (req: Request) => {
   // 必须先拒绝不可信请求，不能先解析正文、读库或创建测试。
+  if (isPublicVisitorMode()) {
+    throw new ApiError(403, "local_only", "展示站点不提供连接测试；该功能在作者本地版本中可用。");
+  }
   assertLocalMutation(req);
   if (req.headers.get("content-type")?.split(";")[0].trim().toLowerCase() !== "application/json") {
     throw new ApiError(415, "unsupported_media_type", "连接测试仅接受 JSON 确认请求。");

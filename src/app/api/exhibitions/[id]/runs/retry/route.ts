@@ -5,6 +5,7 @@ import { retryRange, gateCeiling } from "@/lib/orchestrator/rerunMatrix";
 import { stageIndex } from "@/lib/orchestrator/stateMachine";
 import { ApiError, ok, handler } from "@/lib/api/errors";
 
+import { requireVisitorMutation } from "@/lib/visitor/access";
 export const runtime = "nodejs";
 
 type Ctx = { params: Promise<{ id: string }> };
@@ -13,6 +14,7 @@ type Ctx = { params: Promise<{ id: string }> };
 export const POST = handler(async (_req: Request, { params }: Ctx) => {
   const { id } = await params;
   const db = getDb();
+  requireVisitorMutation(db, _req, id);
   const exh = getExhibition(db, id);
   if (!exh) throw new ApiError(404, "not_found", "影展不存在。");
   if (!exh.failed_stage) {

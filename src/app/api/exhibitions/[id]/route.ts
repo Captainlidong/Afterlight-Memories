@@ -6,6 +6,7 @@ import { markStale } from "@/lib/orchestrator/rerunMatrix";
 import { assertWritable } from "@/lib/orchestrator/guard";
 import { Tone, Template } from "@/lib/agents/schemas";
 import { ApiError, ok, handler } from "@/lib/api/errors";
+import { requireVisitorMutation, requireVisitorRead } from "@/lib/visitor/access";
 import { z } from "zod";
 
 export const runtime = "nodejs";
@@ -23,6 +24,7 @@ const PatchInput = z.object({
 
 export const GET = handler(async (_req: Request, { params }: Ctx) => {
   const { id } = await params;
+  requireVisitorRead(getDb(), _req, id);
   const exhibition = getExhibition(getDb(), id);
   if (!exhibition) throw new ApiError(404, "not_found", "影展不存在。");
   return ok({ exhibition });
@@ -32,6 +34,7 @@ export const PATCH = handler(async (req: Request, { params }: Ctx) => {
   const { id } = await params;
   const body = PatchInput.parse(await req.json());
   const db = getDb();
+  requireVisitorMutation(db, req, id);
   db.exec("BEGIN IMMEDIATE");
   try {
     const current = getExhibition(db, id);
@@ -56,6 +59,7 @@ export const PATCH = handler(async (req: Request, { params }: Ctx) => {
 export const DELETE = handler(async (_req: Request, { params }: Ctx) => {
   const { id } = await params;
   const db = getDb();
+  requireVisitorMutation(db, _req, id);
   if (!getExhibition(db, id)) throw new ApiError(404, "not_found", "影展不存在。");
   assertWritable(db, id);
   deleteExhibition(db, id);

@@ -38,7 +38,7 @@ afterAll(() => {
 
 describe("demo seed → ingest 端到端", () => {
   it("24 张示例图分析完成，命中预设，近重复成组", async () => {
-    const res = await seed();
+    const res = await seed(new Request("http://localhost/api/demo/seed", { method: "POST" }));
     expect(res.status).toBe(201);
     const { id } = await res.json();
     expect(listPhotos(db, id).length).toBe(DEMO_COUNT);
@@ -63,7 +63,7 @@ describe("demo seed → ingest 端到端", () => {
     expect(ins20.duplicate_group_id).toBe(ins21.duplicate_group_id);
 
     // 连续两次 seed 不碰撞（全新 id）。
-    const res2 = await seed();
+    const res2 = await seed(new Request("http://localhost/api/demo/seed", { method: "POST" }));
     const { id: id2 } = await res2.json();
     expect(id2).not.toBe(id);
   }, 60000);

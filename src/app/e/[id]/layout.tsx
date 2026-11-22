@@ -1,5 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { cookies } from "next/headers";
+import { visitorOwnsExhibition } from "@/lib/visitor/access";
+import { VISITOR_COOKIE } from "@/lib/visitor/cookie";
 import { getDb } from "@/lib/db/client";
 import { getExhibition } from "@/lib/db/repos";
 import { DemoBadge } from "@/components/DemoBadge";
@@ -19,7 +22,11 @@ export default async function EditorLayout({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const exhibition = getExhibition(getDb(), id);
+  const cookieStore = await cookies();
+  const sid = cookieStore.get(VISITOR_COOKIE)?.value ?? null;
+  const db = getDb();
+  if (!visitorOwnsExhibition(db, sid, id)) notFound();
+  const exhibition = getExhibition(db, id);
   if (!exhibition) notFound();
 
   return (

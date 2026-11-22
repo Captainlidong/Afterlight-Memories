@@ -7,6 +7,7 @@ import { assertWritable } from "@/lib/orchestrator/guard";
 import { UpdateDecisionInput } from "@/lib/agents/schemas";
 import { ApiError, ok, handler } from "@/lib/api/errors";
 
+import { requireVisitorMutation } from "@/lib/visitor/access";
 export const runtime = "nodejs";
 
 type Ctx = { params: Promise<{ id: string; photoId: string }> };
@@ -21,6 +22,7 @@ const inKeepSet = (d: string) => d === "keep" || d === "must_keep";
 export const PATCH = handler(async (req: Request, { params }: Ctx) => {
   const { id, photoId } = await params;
   const db = getDb();
+  requireVisitorMutation(db, req, id);
   const exh = getExhibition(db, id);
   if (!exh) throw new ApiError(404, "not_found", "影展不存在。");
   const photo = getPhoto(db, photoId);

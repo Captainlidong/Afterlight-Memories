@@ -13,6 +13,7 @@ import { BatchCurationInput } from "@/lib/agents/schemas";
 import { ApiError, ConcurrentRunError, ok, handler } from "@/lib/api/errors";
 import type { CurationDecisionDTO } from "@/types";
 
+import { requireVisitorMutation } from "@/lib/visitor/access";
 export const runtime = "nodejs";
 
 type Ctx = { params: Promise<{ id: string }> };
@@ -27,6 +28,7 @@ const inKeepSet = (d: string) => d === "keep" || d === "must_keep";
 export const POST = handler(async (req: Request, { params }: Ctx) => {
   const { id } = await params;
   const db = getDb();
+  requireVisitorMutation(db, req, id);
   const exh = getExhibition(db, id);
   if (!exh) throw new ApiError(404, "not_found", "影展不存在。");
   const input = BatchCurationInput.parse(await req.json());

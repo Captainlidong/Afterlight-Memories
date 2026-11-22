@@ -1,6 +1,8 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { getDb } from "@/lib/db/client";
-import { listExhibitions } from "@/lib/db/repos";
+import { listExhibitions, listExhibitionsForVisitor } from "@/lib/db/repos";
+import { VISITOR_COOKIE } from "@/lib/visitor/cookie";
 import { listPhotos } from "@/lib/db/photos";
 import { DemoSeedButton } from "@/components/DemoSeedButton";
 import { DemoResetButton } from "@/components/DemoResetButton";
@@ -80,13 +82,19 @@ function fmtUpdated(iso: string): string {
   }).format(d);
 }
 
-export default function HomePage() {
+export default async function HomePage() {
   const db = getDb();
-  const exhibitions = listExhibitions(db);
+  // 展示站点模式（AFTERLIGHT_SHOWCASE=1）：只浏览，不提供创建/演示数据入口。
+  const isShowcaseSite = process.env.AFTERLIGHT_SHOWCASE === "1";
+  // 公网完整版（AFTERLIGHT_PUBLIC=1）：匿名会话隔离，访客可完整创作（AI 受额度与时时段约束）。
+  const isPublicVisitor = process.env.AFTERLIGHT_PUBLIC === "1";
+  const cookieStore = isPublicVisitor ? await cookies() : null;
+  const visitorSid = isPublicVisitor ? cookieStore?.get(VISITOR_COOKIE)?.value ?? null : null;
+  const exhibitions = isPublicVisitor
+    ? (visitorSid ? listExhibitionsForVisitor(db, visitorSid) : [])
+    : listExhibitions(db);
   const showcase = exhibitions.find((e) => e.is_demo_set) ?? null;
   const showcaseHref = showcase ? `/exhibition/${showcase.id}` : "/create";
-  // 展示站点模式（公网部署）：只浏览，不提供创建/演示数据入口；写入由本地同源守卫另行 403 保护。
-  const isShowcaseSite = process.env.AFTERLIGHT_SHOWCASE === "1";
 
   return (
     <main className="mx-auto flex min-h-screen max-w-3xl flex-col justify-center px-6 py-20">
@@ -105,6 +113,12 @@ export default function HomePage() {
         它不替你决定人生故事，而是帮你发现：你到底在反复拍什么，以及这些照片可以怎样被观看。
       </p>
 
+      {isPublicVisitor && (
+        <p className="mt-4 text-xs leading-relaxed text-muted">
+          在线体验为临时数据（保留 1 小时），喜欢请及时导出保存；每个访客可体验 1 次真实 AI 策展（DeepSeek 空闲时段开放，每日名额有限）。
+        </p>
+      )}
+
       {!isShowcaseSite && (
         <div className="mt-10 flex flex-wrap gap-4">
           <Link href="/create" className="btn btn-primary">
@@ -114,6 +128,7 @@ export default function HomePage() {
         </div>
       )}
 
+      {showcase && (
       <Link
         href={showcaseHref}
         className="group relative mt-10 block overflow-hidden rounded-lg border border-ink-line transition-colors hover:border-gold/50"
@@ -135,7 +150,7 @@ export default function HomePage() {
         <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-4">
           <div>
             <p className="text-[10px] uppercase tracking-[0.25em] text-gold">示例影展</p>
-            <p className="mt-1 font-display text-lg text-text">在光线转弯之前</p>
+            <p className="mt-1 font-display text-lg text-text">{showcase.title || "在光线转弯之前"}</p>
             <p className="mt-0.5 text-xs text-muted">进入 / 经过 / 留下 · 24 张照片</p>
           </div>
           <span className="btn btn-outline !min-h-9 shrink-0 !px-3 text-xs group-hover:border-gold/60">
@@ -143,6 +158,7 @@ export default function HomePage() {
           </span>
         </div>
       </Link>
+      )}
 
       <div className="mt-10 flex items-center gap-3 text-sm text-muted">
         <span className="text-text">24 张照片</span>
@@ -159,10 +175,10 @@ export default function HomePage() {
             <summary className="flex cursor-pointer list-none items-end justify-between gap-4">
               <span>
                 <span className="text-xs uppercase tracking-[0.2em] text-muted">
-                  {isShowcaseSite ? "在线影展" : "继续编辑"}
+                  {isShowcaseSite ? "在线影展" : isPublicVisitor ? "我的影展" : "继续编辑"}
                 </span>
                 <span className="mt-1 block text-xs text-muted">
-                  {isShowcaseSite ? "点击展开，浏览本站收录的影展。" : "从最近的进度接着做，或打开已完成的影展观看。"}
+                  {isShowcaseSite ? "点击展开，浏览本站收录的影展。" : isPublicVisitor ? "只显示你自己创建的影展（1 小时后自动清理）。" : "从最近的进度接着做，或打开已完成的影展观看。"}
                 </span>
               </span>
               <span className="text-xs text-muted">{exhibitions.length} 场 ▾</span>

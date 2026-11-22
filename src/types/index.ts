@@ -66,6 +66,8 @@ export interface Exhibition {
   selection_hold_policy: "exclude" | "include" | null;
   created_at: string;
   updated_at: string;
+  /** 公网匿名会话归属；本机版恒为 null */
+  session_id: string | null;
 }
 
 /** 照片资产 DTO（DB 行映射，exif_json 已解析）。 */

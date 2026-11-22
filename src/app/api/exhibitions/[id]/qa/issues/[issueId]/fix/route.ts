@@ -5,6 +5,7 @@ import { fixIssue } from "@/lib/agents/curatorialQa";
 import { assertWritable } from "@/lib/orchestrator/guard";
 import { ApiError, ok, handler } from "@/lib/api/errors";
 
+import { requireVisitorMutation } from "@/lib/visitor/access";
 export const runtime = "nodejs";
 
 type Ctx = { params: Promise<{ id: string; issueId: string }> };
@@ -13,6 +14,7 @@ type Ctx = { params: Promise<{ id: string; issueId: string }> };
 export const POST = handler(async (_req: Request, { params }: Ctx) => {
   const { id, issueId } = await params;
   const db = getDb();
+  requireVisitorMutation(db, _req, id);
   if (!getExhibition(db, id)) throw new ApiError(404, "not_found", "影展不存在。");
   assertWritable(db, id);
   const result = fixIssue(db, id, issueId);

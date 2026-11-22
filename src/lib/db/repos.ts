@@ -29,6 +29,7 @@ interface ExhibitionRow {
   selection_hold_policy: string | null;
   created_at: string;
   updated_at: string;
+  session_id: string | null;
 }
 
 function mapRow(r: ExhibitionRow): Exhibition {
@@ -59,6 +60,7 @@ function mapRow(r: ExhibitionRow): Exhibition {
     selection_hold_policy: r.selection_hold_policy as Exhibition["selection_hold_policy"],
     created_at: r.created_at,
     updated_at: r.updated_at,
+    session_id: r.session_id ?? null,
   };
 }
 
@@ -66,7 +68,7 @@ export function createExhibition(
   db: DatabaseSync,
   input: CreateExhibitionInputT,
   mode: RunMode,
-  opts: { isDemoSet?: boolean; title?: string } = {},
+  opts: { isDemoSet?: boolean; title?: string; sessionId?: string | null } = {},
 ): Exhibition {
   const id = newId("exh");
   const ts = now();
@@ -75,8 +77,8 @@ export function createExhibition(
     `INSERT INTO exhibitions
       (id, title, subtitle, source_type, user_intent, tone, aesthetic_prefs,
        allow_exif, allow_external_ai, privacy_mode, mode, is_demo_set, status,
-       template, current_version, created_at, updated_at)
-     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+       template, current_version, session_id, created_at, updated_at)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
   ).run(
     id,
     opts.title ?? input.title ?? "",
@@ -93,6 +95,7 @@ export function createExhibition(
     "draft",
     "cinema_scroll",
     0,
+    opts.sessionId ?? null,
     ts,
     ts,
   );
@@ -110,6 +113,14 @@ export function listExhibitions(db: DatabaseSync): Exhibition[] {
   const rows = db
     .prepare("SELECT * FROM exhibitions ORDER BY updated_at DESC")
     .all() as unknown as ExhibitionRow[];
+  return rows.map(mapRow);
+}
+
+/** 公网访客视图：仅本会话影展（按更新时间倒序）。 */
+export function listExhibitionsForVisitor(db: DatabaseSync, sessionId: string): Exhibition[] {
+  const rows = db
+    .prepare("SELECT * FROM exhibitions WHERE session_id=? ORDER BY updated_at DESC")
+    .all(sessionId) as unknown as ExhibitionRow[];
   return rows.map(mapRow);
 }
 

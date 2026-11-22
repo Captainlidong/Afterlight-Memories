@@ -14,6 +14,7 @@ import {
   demoPhotoMeta,
 } from "@/lib/demo/manifest";
 import { ApiError, ok, handler } from "@/lib/api/errors";
+import { resolveVisitorSessionForCreate } from "@/lib/visitor/access";
 
 export const runtime = "nodejs";
 
@@ -21,9 +22,11 @@ export const runtime = "nodejs";
  * 演示种子（§9.3 / §14）：每次创建全新影展 id（is_demo_set=1, mode=demo），
  * 复制 24 张内置示例图到该影展 uploads 目录。3 次连续演示互不碰撞、无需改库/重启。
  * 真实 sharp 指标在随后的 ingest 中实跑；预设语义标签按 sha256 manifest 命中合并。
+ * 公网模式下绑定访客会话（随会话过期），零模型调用。
  */
-export const POST = handler(async () => {
+export const POST = handler(async (req: Request) => {
   const db = getDb();
+  const { sid, setCookie } = resolveVisitorSessionForCreate(db, req);
   const input = CreateExhibitionInput.parse({
     title: "在光线转弯之前",
     source_type: "campus",
@@ -34,7 +37,7 @@ export const POST = handler(async () => {
     allow_external_ai: false,
     mode: "demo",
   });
-  const exhibition = createExhibition(db, input, "demo", { isDemoSet: true });
+  const exhibition = createExhibition(db, input, "demo", { isDemoSet: true, sessionId: sid || undefined });
   const dir = uploadsDir(exhibition.id);
   fs.mkdirSync(dir, { recursive: true });
 
@@ -69,5 +72,8 @@ export const POST = handler(async () => {
     });
   }
 
-  return ok({ id: exhibition.id, exhibition, photos: DEMO_COUNT }, { status: 201 });
+  return ok({ id: exhibition.id, exhibition, photos: DEMO_COUNT }, {
+    status: 201,
+    headers: setCookie ? { "set-cookie": setCookie } : undefined,
+  });
 });

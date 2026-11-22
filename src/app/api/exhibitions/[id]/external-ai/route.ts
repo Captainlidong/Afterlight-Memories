@@ -5,6 +5,7 @@ import { assertWritable } from "@/lib/orchestrator/guard";
 import { assertLocalMutation } from "@/lib/api/localRequest";
 import { ApiError, handler, ok } from "@/lib/api/errors";
 
+import { requireVisitorMutation } from "@/lib/visitor/access";
 export const runtime = "nodejs";
 const Input = z.object({ allow_external_ai: z.boolean() }).strict();
 
@@ -13,6 +14,7 @@ export const PATCH = handler(async (req: Request, { params }: { params: Promise<
   const body = Input.parse(await req.json());
   const { id } = await params;
   const db = getDb();
+  requireVisitorMutation(db, req, id);
   const exhibition = getExhibition(db, id);
   if (!exhibition) throw new ApiError(404, "not_found", "影展不存在。");
   if (body.allow_external_ai) {

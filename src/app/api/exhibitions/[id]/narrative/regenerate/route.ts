@@ -5,6 +5,7 @@ import { startPipelineOnce } from "@/lib/orchestrator/orchestrator";
 import { RegenerateNarrativeInput } from "@/lib/agents/schemas";
 import { ApiError, ok, handler } from "@/lib/api/errors";
 
+import { requireVisitorMutation } from "@/lib/visitor/access";
 export const runtime = "nodejs";
 
 type Ctx = { params: Promise<{ id: string }> };
@@ -19,6 +20,7 @@ type Ctx = { params: Promise<{ id: string }> };
 export const POST = handler(async (req: Request, { params }: Ctx) => {
   const { id } = await params;
   const db = getDb();
+  requireVisitorMutation(db, req, id);
   if (!getExhibition(db, id)) throw new ApiError(404, "not_found", "影展不存在。");
   const input = RegenerateNarrativeInput.parse(await req.json().catch(() => ({})));
 

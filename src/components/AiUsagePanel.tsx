@@ -8,6 +8,8 @@ import { STAGE_META } from "@/lib/orchestrator/stateMachine";
 import type { AiConnectionStatus } from "@/lib/ai/status";
 import { AI_ERROR_GUIDANCE } from "@/lib/ai/feedback";
 import type { AiErrorClass } from "@/lib/ai/errors";
+import { isPublicVisitorMode } from "@/lib/visitor/cookie";
+import { aiWindowNow } from "@/lib/ai/schedule";
 
 export function ExhibitionUsage({ exhibitionId }: { exhibitionId: string }) {
   const { data } = useStatus(exhibitionId);
@@ -98,6 +100,20 @@ function useAiConnection() {
 export function AiUsagePanel() {
   const { data, error, mutate, confirmed, setConfirmed, pending, testError, canTest, testConnection } = useAiConnection();
   const connection = data?.connection;
+
+  // 公网完整版：访客看到时段状态与体验规则，不提供连接测试（作者功能）。
+  if (isPublicVisitorMode()) {
+    const win = aiWindowNow();
+    return (
+      <aside className="space-y-2 rounded-lg border border-ink-line p-4 text-xs leading-relaxed text-muted">
+        <p role="status">本地演示始终可用，无需模型配置，也不会向模型服务发送照片。</p>
+        <p className="text-text">{win.allowed ? "当前为 DeepSeek 空闲时段，可体验真实 AI 策展。" : win.message}</p>
+        <p>每个访客可体验 1 次真实 AI 策展（每日名额有限）；AI 体验影展最多 10 张照片。体验数据保留 1 小时，请及时导出保存。</p>
+        <p>体验次数用完或处于高峰时段时，仍可创建影展使用本地演示模式（不限次）。</p>
+      </aside>
+    );
+  }
+
   const headline = error
     ? "AI 状态暂时无法加载；本地演示不受影响。"
     : !connection

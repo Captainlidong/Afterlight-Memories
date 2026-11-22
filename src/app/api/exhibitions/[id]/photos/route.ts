@@ -14,7 +14,9 @@ import { markStale } from "@/lib/orchestrator/rerunMatrix";
 import { assertWritable } from "@/lib/orchestrator/guard";
 import { newId } from "@/lib/id";
 import { ApiError, ok, handler } from "@/lib/api/errors";
+import { assertVisitorUploadDiskCap } from "@/lib/visitor/quota";
 
+import { requireVisitorMutation, requireVisitorRead } from "@/lib/visitor/access";
 export const runtime = "nodejs";
 
 type Ctx = { params: Promise<{ id: string }> };
@@ -41,6 +43,7 @@ interface UploadResult {
 export const GET = handler(async (_req: Request, { params }: Ctx) => {
   const { id } = await params;
   const db = getDb();
+  requireVisitorRead(db, _req, id);
   if (!getExhibition(db, id)) throw new ApiError(404, "not_found", "影展不存在。");
   return ok({ photos: listPhotos(db, id), inspections: listInspections(db, id) });
 });
@@ -48,6 +51,8 @@ export const GET = handler(async (_req: Request, { params }: Ctx) => {
 export const POST = handler(async (req: Request, { params }: Ctx) => {
   const { id } = await params;
   const db = getDb();
+  requireVisitorMutation(db, req, id);
+  assertVisitorUploadDiskCap(db);
   const initial = getExhibition(db, id);
   if (!initial) throw new ApiError(404, "not_found", "影展不存在。");
   assertWritable(db, id);

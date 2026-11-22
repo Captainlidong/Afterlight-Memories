@@ -5,6 +5,7 @@ import { restoreVersion } from "@/lib/orchestrator/versions";
 import { assertWritable } from "@/lib/orchestrator/guard";
 import { ApiError, ok, handler } from "@/lib/api/errors";
 
+import { requireVisitorMutation } from "@/lib/visitor/access";
 export const runtime = "nodejs";
 
 type Ctx = { params: Promise<{ id: string; version: string }> };
@@ -13,6 +14,7 @@ type Ctx = { params: Promise<{ id: string; version: string }> };
 export const POST = handler(async (_req: Request, { params }: Ctx) => {
   const { id, version } = await params;
   const db = getDb();
+  requireVisitorMutation(db, _req, id);
   if (!getExhibition(db, id)) throw new ApiError(404, "not_found", "影展不存在。");
   const v = Number(version);
   if (!Number.isInteger(v) || v < 1) {

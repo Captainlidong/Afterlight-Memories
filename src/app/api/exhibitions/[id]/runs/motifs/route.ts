@@ -4,6 +4,7 @@ import { startPipelineOnce } from "@/lib/orchestrator/orchestrator";
 import { RunTriggerInput } from "@/lib/agents/schemas";
 import { ApiError, ok, handler } from "@/lib/api/errors";
 
+import { requireVisitorMutation } from "@/lib/visitor/access";
 export const runtime = "nodejs";
 
 type Ctx = { params: Promise<{ id: string }> };
@@ -12,6 +13,7 @@ type Ctx = { params: Promise<{ id: string }> };
 export const POST = handler(async (req: Request, { params }: Ctx) => {
   const { id } = await params;
   const db = getDb();
+  requireVisitorMutation(db, req, id);
   if (countPhotos(db, id) === 0) {
     throw new ApiError(400, "no_photos", "还没有照片，请先上传素材。");
   }

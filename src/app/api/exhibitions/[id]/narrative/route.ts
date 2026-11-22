@@ -10,6 +10,7 @@ import { assertWritable } from "@/lib/orchestrator/guard";
 import { UpdateNarrativeInput, type NarrativePlanT } from "@/lib/agents/schemas";
 import { ApiError, ok, handler } from "@/lib/api/errors";
 
+import { requireVisitorMutation, requireVisitorRead } from "@/lib/visitor/access";
 export const runtime = "nodejs";
 
 type Ctx = { params: Promise<{ id: string }> };
@@ -18,6 +19,7 @@ type Ctx = { params: Promise<{ id: string }> };
 export const GET = handler(async (_req: Request, { params }: Ctx) => {
   const { id } = await params;
   const db = getDb();
+  requireVisitorRead(db, _req, id);
   if (!getExhibition(db, id)) throw new ApiError(404, "not_found", "影展不存在。");
   return ok({ narrative: getNarrative(db, id), edits: listEdits(db, id) });
 });
@@ -39,6 +41,7 @@ export const PATCH = handler(async (req: Request, { params }: Ctx) => {
   // 不跨 await 持有快照或写锁。最新读取、运行占用检查、双 CAS 和全部落库在同一短事务。
   const input = UpdateNarrativeInput.parse(await req.json());
   const db = getDb();
+  requireVisitorMutation(db, req, id);
   db.exec("BEGIN IMMEDIATE");
   try {
     const exh = getExhibition(db, id);

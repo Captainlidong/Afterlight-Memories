@@ -8,6 +8,7 @@ import { assertWritable } from "@/lib/orchestrator/guard";
 import { toAbsolute } from "@/lib/files";
 import { ApiError, ok, handler } from "@/lib/api/errors";
 
+import { requireVisitorMutation } from "@/lib/visitor/access";
 export const runtime = "nodejs";
 
 type Ctx = { params: Promise<{ id: string; photoId: string }> };
@@ -15,6 +16,7 @@ type Ctx = { params: Promise<{ id: string; photoId: string }> };
 export const DELETE = handler(async (_req: Request, { params }: Ctx) => {
   const { id, photoId } = await params;
   const db = getDb();
+  requireVisitorMutation(db, _req, id);
   const exh = getExhibition(db, id);
   if (!exh) throw new ApiError(404, "not_found", "影展不存在。");
   const photo = getPhoto(db, photoId);

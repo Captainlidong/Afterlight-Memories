@@ -84,7 +84,9 @@ describe("持久策展任务", () => {
     const db = new DatabaseSync(":memory:"); handles.push(db);
     for (const sql of MIGRATIONS.slice(0, 7)) db.exec(sql);
     db.exec("PRAGMA user_version=7");
-    const exh = createExhibition(db, CreateExhibitionInput.parse({ allow_external_ai: true }), "ai");
+    // v7 时代的影展行：用原始 INSERT 复现旧 schema（migration 10 之前没有 session_id 列）
+    db.exec("INSERT INTO exhibitions (id, title, mode, status, template, current_version, privacy_mode, created_at, updated_at) VALUES ('exh_upgrade_old', '旧影展', 'ai', 'draft', 'cinema_scroll', 0, 'local_first', '2026-11-01T00:00:00.000Z', '2026-11-01T00:00:00.000Z')");
+    const exh = { id: "exh_upgrade_old" };
     const old = createAiCall(db, call(exh.id));
     db.prepare("UPDATE ai_calls SET status='failed' WHERE id=?").run(old.id);
     const before = listAiCalls(db);

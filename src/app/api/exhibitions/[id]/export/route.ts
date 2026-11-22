@@ -6,6 +6,7 @@ import { buildJsonPack } from "@/lib/export/jsonPack";
 import { ExportInput } from "@/lib/agents/schemas";
 import { ApiError, handler } from "@/lib/api/errors";
 
+import { requireVisitorMutation } from "@/lib/visitor/access";
 export const runtime = "nodejs";
 
 type Ctx = { params: Promise<{ id: string }> };
@@ -14,6 +15,7 @@ type Ctx = { params: Promise<{ id: string }> };
 export const POST = handler(async (req: Request, { params }: Ctx) => {
   const { id } = await params;
   const db = getDb();
+  requireVisitorMutation(db, req, id);
   if (!getExhibition(db, id)) throw new ApiError(404, "not_found", "影展不存在。");
   const { format } = ExportInput.parse(await req.json().catch(() => ({})));
   if (format === "json") {

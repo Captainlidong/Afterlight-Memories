@@ -396,6 +396,19 @@ DROP TABLE narrative_regenerations;
 ALTER TABLE narrative_regenerations_new RENAME TO narrative_regenerations;
 CREATE INDEX idx_regen_exh ON narrative_regenerations(exhibition_id, created_at);
 `,
+  // migration 10 — 公网匿名会话（AFTERLIGHT_PUBLIC=1 时启用）。会话无身份概念，数据滑动过期后成套清理；
+  // 本机版 session_id 恒为 NULL，行为不变。
+  `
+ALTER TABLE exhibitions ADD COLUMN session_id TEXT;
+CREATE TABLE visitor_sessions (
+  id                 TEXT PRIMARY KEY,
+  created_at         TEXT NOT NULL,
+  last_seen_at       TEXT NOT NULL,
+  ai_experience_used INTEGER NOT NULL DEFAULT 0 CHECK (ai_experience_used IN (0, 1))
+);
+CREATE INDEX idx_exhibitions_session ON exhibitions(session_id);
+CREATE INDEX idx_visitor_sessions_seen ON visitor_sessions(last_seen_at);
+`,
 ];
 
 export function migrate(db: DatabaseSync): void {

@@ -5,6 +5,7 @@ import { getDb } from "@/lib/db/client";
 import { getPhoto } from "@/lib/db/photos";
 import { uploadsDir, toAbsolute } from "@/lib/files";
 import { ApiError, handler } from "@/lib/api/errors";
+import { requireVisitorRead } from "@/lib/visitor/access";
 
 export const runtime = "nodejs";
 
@@ -16,6 +17,7 @@ type Ctx = { params: Promise<{ exhId: string; photoId: string }> };
  */
 export const GET = handler(async (req: Request, { params }: Ctx) => {
   const { exhId, photoId } = await params;
+  requireVisitorRead(getDb(), req, exhId);
   const photo = getPhoto(getDb(), photoId);
   if (!photo || photo.exhibition_id !== exhId) {
     throw new ApiError(404, "not_found", "照片不存在。");

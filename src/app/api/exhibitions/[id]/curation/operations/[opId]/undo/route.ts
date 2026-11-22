@@ -13,6 +13,7 @@ import { invalidateForDecisionChange } from "@/lib/orchestrator/rerunMatrix";
 import type { UserDecisionT } from "@/lib/agents/schemas";
 import { ApiError, ConcurrentRunError, ok, handler } from "@/lib/api/errors";
 
+import { requireVisitorMutation } from "@/lib/visitor/access";
 export const runtime = "nodejs";
 
 type Ctx = { params: Promise<{ id: string; opId: string }> };
@@ -27,6 +28,7 @@ const inKeepSet = (d: string) => d === "keep" || d === "must_keep";
 export const POST = handler(async (_req: Request, { params }: Ctx) => {
   const { id, opId } = await params;
   const db = getDb();
+  requireVisitorMutation(db, _req, id);
   const exh = getExhibition(db, id);
   if (!exh) throw new ApiError(404, "not_found", "影展不存在。");
   const op = getOperation(db, opId);

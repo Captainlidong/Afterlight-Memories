@@ -5,6 +5,7 @@ import { getLayout } from "@/lib/db/layout";
 import { listPhotos } from "@/lib/db/photos";
 import { ApiError, ok, handler } from "@/lib/api/errors";
 
+import { requireVisitorRead } from "@/lib/visitor/access";
 export const runtime = "nodejs";
 
 type Ctx = { params: Promise<{ id: string }> };
@@ -17,6 +18,7 @@ type Ctx = { params: Promise<{ id: string }> };
 export const GET = handler(async (_req: Request, { params }: Ctx) => {
   const { id } = await params;
   const db = getDb();
+  requireVisitorRead(db, _req, id);
   const exhibition = getExhibition(db, id);
   if (!exhibition) throw new ApiError(404, "not_found", "影展不存在。");
   return ok({
