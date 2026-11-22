@@ -33,6 +33,17 @@ describe("边缘代理路径归一化", () => {
     expect(normalizeFunctionPath("/_next/static/chunk.js")).toBe("/functions/v1/app/_next/static/chunk.js");
   });
 
+  it("物理函数名形态（生产 canonical：308 目标实测）剥离物理段", () => {
+    const physical = "/app-d01a203d2eff37b4ea9121344d260bce3";
+    expect(normalizeFunctionPath(`/functions/v1/app${physical}/api/health`)).toBe("/functions/v1/app/api/health");
+    expect(normalizeFunctionPath(`/functions/v1/app${physical}`)).toBe("/functions/v1/app");
+    expect(normalizeFunctionPath(`/functions/v1/app${physical}/demo/photos/p01.jpg`)).toBe(
+      "/functions/v1/app/demo/photos/p01.jpg",
+    );
+    expect(normalizeFunctionPath(`${physical}/api/health`)).toBe("/functions/v1/app/api/health");
+    expect(normalizeFunctionPath(`/functions/v1${physical}/api/health`)).toBe("/functions/v1/app/api/health");
+  });
+
   it("根路径与空路径指向应用根（源站 basePath 重定向/首页）", () => {
     expect(normalizeFunctionPath("/")).toBe("/functions/v1/app");
     expect(normalizeFunctionPath("")).toBe("/functions/v1/app");
