@@ -13,6 +13,44 @@ interface UploadResult {
 }
 
 const MAX_SIZE = 25 * 1024 * 1024;
+/**
+ * Qoder Sites 网关请求体上限实测约 10MB（>10MB 返回 413 "Request size limit exceeded"）。
+ * 超过阈值的照片在上传前自动降采样（长边 ≤2560px、JPEG q85，仍超则逐级缩至 1600px），
+ * 影展导出本身只使用 ≤1600px，画质无损于最终作品；EXIF 在重编码后移除（隐私更优）。
+ */
+const GATEWAY_LIMIT = 9.5 * 1024 * 1024;
+
+async function encodeBitmap(bitmap: ImageBitmap, edge: number, quality: number): Promise<Blob | null> {
+  const long = Math.max(bitmap.width, bitmap.height);
+  const scale = Math.min(1, edge / long);
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+  canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return null;
+  ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  return await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/jpeg", quality));
+}
+
+/** 超过网关上限的照片自动压缩；压缩失败或无收益时原样上传（逐张报错，不阻断其余照片）。 */
+async function maybeCompress(file: File): Promise<File> {
+  if (file.size <= GATEWAY_LIMIT) return file;
+  try {
+    const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
+    let edge = 2560;
+    let blob = await encodeBitmap(bitmap, edge, 0.85);
+    while (blob && blob.size > GATEWAY_LIMIT && edge > 1600) {
+      edge = Math.round(edge * 0.8);
+      blob = await encodeBitmap(bitmap, edge, 0.85);
+    }
+    bitmap.close();
+    if (!blob || blob.size >= file.size) return file;
+    const base = file.name.replace(/\.(jpe?g|png|webp)$/i, "");
+    return new File([blob], `${base}.jpg`, { type: "image/jpeg" });
+  } catch {
+    return file;
+  }
+}
 
 /**
  * 单张照片上传：边缘代理形态下每个请求只携带一张照片（≤25MB），
@@ -74,11 +112,12 @@ export function UploadZone({
         const total = accepted.reduce((sum, f) => sum + f.size, 0);
         let sentBefore = 0;
         const photos: UploadResult[] = [];
-        for (const file of accepted) {
+        for (const original of accepted) {
+          const file = await maybeCompress(original);
           const baseBytes = sentBefore;
           sentBefore += file.size;
           const result = await uploadOne(exhibitionId, file, (fraction) => {
-            setProgress(Math.round(((baseBytes + fraction * file.size) / total) * 100));
+            setProgress(Math.round(((baseBytes + fraction * file.size) / Math.max(1, total)) * 100));
           });
           photos.push(result);
           setResults([...photos]);
@@ -127,7 +166,7 @@ export function UploadZone({
         ) : (
           <>
             <p className="text-sm text-text">把照片拖进来，或点击选择</p>
-            <p className="text-xs text-muted">JPG / PNG / WEBP · 单张 ≤25MB · 一次 ≤60 张 · 原图仅存本地</p>
+            <p className="text-xs text-muted">JPG / PNG / WEBP · 单张 ≤25MB · 一次 ≤60 张 · 超过 9.5MB 自动压缩 · 原图仅存本地</p>
           </>
         )}
       </div>
