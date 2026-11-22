@@ -28,3 +28,9 @@ next-env.d.ts
 /gui-test-screenshots/
 deploy-package/
 /showcase-seed/
+
+# 部署物料与站点快照（含服务器地址等信息，不入公开仓库）
+qoder-sites-static/
+qoder-sites-static.zip
+*.tar.gz
+.留影 Afterlight.qoder.site

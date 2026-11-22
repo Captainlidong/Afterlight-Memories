@@ -9,6 +9,14 @@
 
 产品与技术规格见 [`留影 Afterlight_项目设计文档.md`](./留影%20Afterlight_项目设计文档.md)。
 
+## 🏆 2026 Qoder 高校创造力大赛
+
+- **赛道**：LifeHack 生活娱乐
+- **在线展示**：[Qoder Sites 展示站](https://afterlight-7t02u8l5rdv.qoder.zone)（落地页 + 示例影展完整可玩版；完整创作流程入口见展示站「创作影展」按钮）
+- **参赛作品帖**（自我介绍 / 作品是什么 / 为什么做 / 怎么用 5 步 / 怎么用 Qoder 做出来的 + 开发过程截图凭证）：[`docs/天池作品帖_留影Afterlight.md`](./docs/天池作品帖_留影Afterlight.md)
+
+本项目从需求拆解、代码实现到部署上线，全程以「作者提需求与验收 + Qoder AI 协作开发」的方式完成。开源本仓库意在完整呈现这一协作过程：设计文档、六个 Agent 的契约、测试与验收记录全部保留，欢迎参考、复用与交流。
+
 ## 快速开始
 
 环境要求：**Node.js ≥ 24**（内置 `node:sqlite`，无需原生编译）、npm。Windows / macOS / Linux 均可。
