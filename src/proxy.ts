@@ -18,16 +18,13 @@ export function proxy(req: NextRequest) {
 }
 
 function handleVisitor(req: NextRequest) {
-  // 可选加固（AFTERLIGHT_PROXY_TOKEN）：设置后源站只接受边缘函数附带同值令牌的请求，
-  // 直连源站的裸请求一律 403——配合网关隐藏 IP，源站不再提供绕过站点的直达入口。
-  // 例外：服务器本机回环诊断（无转发头且 Host 为回环地址）不受影响，作者仍可 curl 自检。
+  // 可选加固（AFTERLIGHT_PROXY_TOKEN）：设置后所有请求必须携带同值令牌（由边缘函数附加），
+  // 直连源站的裸请求一律 403——包括伪装 Host 的伪造请求（不做任何基于请求头的豁免）。
+  // 服务器本机诊断请附带令牌：
+  //   curl -H "x-afterlight-proxy: $AFTERLIGHT_PROXY_TOKEN" http://127.0.0.1:3000/functions/v1/app/api/health
   const expectedToken = process.env.AFTERLIGHT_PROXY_TOKEN?.trim();
   if (expectedToken && req.headers.get("x-afterlight-proxy") !== expectedToken) {
-    const host = req.headers.get("host") ?? "";
-    const loopbackLocal = /^(127\.0\.0\.1|\[::1\]|localhost)(:\d+)?$/.test(host) && !req.headers.has("x-forwarded-host");
-    if (!loopbackLocal) {
-      return errorResponse(new ApiError(403, "proxy_required", "请通过站点页面访问。"));
-    }
+    return errorResponse(new ApiError(403, "proxy_required", "请通过站点页面访问。"));
   }
   if (req.method === "GET" || req.method === "HEAD") {
     const res = NextResponse.next();
