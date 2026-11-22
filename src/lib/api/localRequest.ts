@@ -35,8 +35,11 @@ function firstForwarded(value: string | null): string | null {
 }
 
 /**
- * 公网访客写守卫（AFTERLIGHT_PUBLIC=1）：同源 Origin + 有效会话 Cookie。
- * 平台 HTTPS 终止在前面，转发头仅用于还原站点地址；会话归属校验由具体路由完成（需要数据库）。
+ * 公网访客写守卫（AFTERLIGHT_PUBLIC=1）：有效会话 Cookie + 同源校验。
+ * 同源校验的可信前提：请求未经不可信代理改写转发头。边缘代理形态（AFTERLIGHT_PROXY_TOKEN
+ * 已设置）下，请求由持令牌的边缘函数转发，网关层已完成同源校验，且函数收到的
+ * x-forwarded-host 为平台内部主机名——此时 Origin 比对不可靠，令牌门即信任边界，
+ * 跳过同源比对（会话归属校验仍由具体路由完成）。未设令牌的直连形态照常比对。
  */
 export function assertVisitorApiMutation(req: Request): { sid: string } {
   if (!isPublicVisitorMode()) {
@@ -44,15 +47,18 @@ export function assertVisitorApiMutation(req: Request): { sid: string } {
   }
   const url = new URL(req.url);
   const headers = req.headers;
-  const host = firstForwarded(headers.get("x-forwarded-host")) ?? headers.get("host") ?? url.host;
-  const proto = firstForwarded(headers.get("x-forwarded-proto")) ?? url.protocol.replace(/:$/, "");
-  const origin = headers.get("origin");
-  if (!origin || origin !== `${proto}://${host}`) {
-    throw new ApiError(403, "untrusted_origin", "写入只允许来自本站页面。请通过站点页面正常操作。");
-  }
   const sid = readCookie(headers.get("cookie"), VISITOR_COOKIE);
   if (!isValidVisitorSid(sid)) {
     throw new ApiError(401, "invalid_session", "请刷新页面后再操作。");
+  }
+  const tokenActive = Boolean(process.env.AFTERLIGHT_PROXY_TOKEN?.trim());
+  if (!tokenActive) {
+    const host = firstForwarded(headers.get("x-forwarded-host")) ?? headers.get("host") ?? url.host;
+    const proto = firstForwarded(headers.get("x-forwarded-proto")) ?? url.protocol.replace(/:$/, "");
+    const origin = headers.get("origin");
+    if (!origin || origin !== `${proto}://${host}`) {
+      throw new ApiError(403, "untrusted_origin", "写入只允许来自本站页面。请通过站点页面正常操作。");
+    }
   }
   return { sid };
 }

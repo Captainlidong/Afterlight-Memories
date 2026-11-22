@@ -124,6 +124,13 @@ describe("公网写守卫（edge 层）", () => {
     const forged = new Request("https://site.test/api/x", { headers: { origin: "https://site.test", host: "site.test", cookie: "afterlight_sid=forged" } });
     expect(() => assertVisitorApiMutation(forged)).toThrow(/刷新页面/);
   });
+  it("代理令牌激活时：Origin 比对跳过（网关形态请求凭令牌+会话放行），会话仍必需", () => {
+    vi.stubEnv("AFTERLIGHT_PROXY_TOKEN", "tok-123");
+    const noOrigin = new Request("https://site.test/api/x", { headers: { host: "site.test", cookie: cookieHeader } });
+    expect(assertVisitorApiMutation(noOrigin)).toEqual({ sid });
+    const forged = new Request("https://site.test/api/x", { headers: { host: "site.test", cookie: "afterlight_sid=forged" } });
+    expect(() => assertVisitorApiMutation(forged)).toThrow(/刷新页面/);
+  });
   it("转发头还原站点地址（HTTPS 终止在前）仍同源可过", () => {
     const req = new Request("http://origin.internal/api/x", {
       headers: {

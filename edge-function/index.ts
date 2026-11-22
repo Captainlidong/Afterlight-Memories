@@ -54,8 +54,8 @@ Deno.serve(async (req: Request): Promise<Response> => {
     const lower = name.toLowerCase();
     if (!HOP_BY_HOP.has(lower) && !lower.startsWith("x-qoder-")) headers.set(name, value);
   }
-  headers.set("x-forwarded-host", incoming.host);
-  headers.set("x-forwarded-proto", incoming.protocol.replace(/:$/, ""));
+  headers.set("x-forwarded-host", headers.get("x-forwarded-host") ?? incoming.host);
+  headers.set("x-forwarded-proto", headers.get("x-forwarded-proto") ?? incoming.protocol.replace(/:$/, ""));
   const token = (Deno.env.get("AFTERLIGHT_PROXY_TOKEN") ?? "").trim();
   if (token) headers.set("x-afterlight-proxy", token);
 
