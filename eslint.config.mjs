@@ -8,7 +8,7 @@ const eslintConfig = [
   ...flat(nextVitals),
   ...flat(nextTs),
   {
-    ignores: [".next/**", "node_modules/**", "data/**", "out/**", "backups/**", ".zcode-site/**", "showcase-seed/**", "gui-test-screenshots/**"],
+    ignores: [".next/**", "node_modules/**", "data/**", "out/**", "backups/**", "deploy-package/**", "showcase-seed/**", "gui-test-screenshots/**"],
   },
 ];
 

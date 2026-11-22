@@ -26,5 +26,5 @@ next-env.d.ts
 # local verification artifacts (author photos copies)
 /backups/
 /gui-test-screenshots/
-.zcode-site/
+deploy-package/
 /showcase-seed/
