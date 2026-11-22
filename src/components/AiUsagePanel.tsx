@@ -1,5 +1,6 @@
 "use client";
 
+import { apiUrl } from "@/lib/appBase";
 import { useRef, useState } from "react";
 import useSWR from "swr";
 import { Button, Spinner } from "@/components/ui";
@@ -74,7 +75,7 @@ function useAiConnection() {
     setConfirmed(false);
     setTestError(null);
     try {
-      const response = await fetch("/api/ai/connection-test", {
+      const response = await fetch(apiUrl("/api/ai/connection-test"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ confirmed: true }),

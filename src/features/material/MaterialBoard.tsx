@@ -1,5 +1,6 @@
 "use client";
 
+import { apiUrl } from "@/lib/appBase";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import useSWR from "swr";
@@ -96,7 +97,7 @@ export function MaterialBoard({
     setBusy(true);
     setError(null);
     try {
-      const res = await fetch(`/api/exhibitions/${exhibitionId}/runs/ingest`, {
+      const res = await fetch(apiUrl(`/api/exhibitions/${exhibitionId}/runs/ingest`), {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ request_id: requestId }),
@@ -262,7 +263,7 @@ function PhotoTile({
         {photo.thumbnail_path ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={`/api/files/${exhibitionId}/${photo.id}?variant=thumb`}
+            src={apiUrl(`/api/files/${exhibitionId}/${photo.id}?variant=thumb`)}
             alt={photo.original_name}
             loading="lazy"
             className="h-full w-full object-cover"

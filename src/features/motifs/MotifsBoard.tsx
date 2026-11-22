@@ -1,5 +1,6 @@
 "use client";
 
+import { apiUrl } from "@/lib/appBase";
 import { useCallback, useState } from "react";
 import Link from "next/link";
 import { useStatus, usePhotos, useMotifs } from "@/lib/hooks";
@@ -101,7 +102,7 @@ export function MotifsBoard({ exhibitionId }: { exhibitionId: string }) {
     setBusy(true);
     setError(null);
     try {
-      const res = await fetch(`/api/exhibitions/${exhibitionId}/runs/narrative`, {
+      const res = await fetch(apiUrl(`/api/exhibitions/${exhibitionId}/runs/narrative`), {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ request_id: requestId() }),
@@ -321,7 +322,7 @@ function MotifCard({
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={`/api/files/${exhibitionId}/${p.id}?variant=thumb`}
+                src={apiUrl(`/api/files/${exhibitionId}/${p.id}?variant=thumb`)}
                 alt={p.original_name}
                 loading="lazy"
                 className="h-full w-full object-cover"
@@ -386,7 +387,7 @@ function PhotoPreview({
         </div>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={`/api/files/${exhibitionId}/${photo.id}?variant=original`}
+          src={apiUrl(`/api/files/${exhibitionId}/${photo.id}?variant=original`)}
           alt={photo.original_name}
           className="max-h-[78vh] w-auto rounded-md border border-ink-line object-contain"
         />

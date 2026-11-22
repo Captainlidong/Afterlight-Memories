@@ -33,10 +33,13 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts"
+    ".next/dev/types/**/*.ts",
+    ".next-v4/types/**/*.ts",
+    ".next-v4/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",
-    "backups"
+    "backups",
+    "edge-function"
   ]
 }

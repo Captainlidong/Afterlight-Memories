@@ -292,3 +292,41 @@ describe("公网路由行为（handler 级）", () => {
     expect(purge).toHaveBeenCalled();
   });
 });
+
+describe("可选代理令牌加固（AFTERLIGHT_PROXY_TOKEN）", () => {
+  it("设置令牌后：无令牌/错值 403，携带同值放行；未设置令牌时行为不变", async () => {
+    const { proxy } = await import("@/proxy");
+    const { NextRequest } = await import("next/server");
+    const req = (headers: Record<string, string>) =>
+      proxy(new NextRequest("https://site.test/api/x", {
+        method: "POST",
+        headers: { origin: "https://site.test", host: "site.test", cookie: cookieHeader, ...headers },
+      }));
+    // 未设置令牌：现行为不变（200）
+    expect((await req({})).status).toBe(200);
+    // 设置令牌：缺头/错值 403，正确令牌放行
+    vi.stubEnv("AFTERLIGHT_PROXY_TOKEN", "tok-123");
+    expect((await req({})).status).toBe(403);
+    expect((await req({ "x-afterlight-proxy": "wrong" })).status).toBe(403);
+    expect((await req({ "x-afterlight-proxy": "tok-123" })).status).toBe(200);
+  });
+});
+
+describe("代理令牌的回环豁免", () => {
+  it("设置令牌后：服务器本机回环诊断（Host 为回环且无转发头）仍可访问", async () => {
+    const { proxy } = await import("@/proxy");
+    const { NextRequest } = await import("next/server");
+    vi.stubEnv("AFTERLIGHT_PROXY_TOKEN", "tok-123");
+    const local = proxy(new NextRequest("http://127.0.0.1:3000/api/x", {
+      method: "GET",
+      headers: { host: "127.0.0.1:3000", cookie: cookieHeader },
+    }));
+    expect(local.status).toBe(200);
+    // 但带转发头伪装回环 Host 的外部请求仍被拒绝
+    const spoofed = proxy(new NextRequest("https://site.test/api/x", {
+      method: "GET",
+      headers: { host: "site.test", "x-forwarded-host": "127.0.0.1:3000", cookie: cookieHeader },
+    }));
+    expect(spoofed.status).toBe(403);
+  });
+});

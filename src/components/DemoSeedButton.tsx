@@ -1,5 +1,6 @@
 "use client";
 
+import { apiUrl } from "@/lib/appBase";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Spinner } from "@/components/ui";
@@ -14,7 +15,7 @@ export function DemoSeedButton() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/demo/seed", { method: "POST" });
+      const res = await fetch(apiUrl("/api/demo/seed"), { method: "POST" });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error?.message ?? "演示初始化失败");
       router.push(`/e/${data.id}/material?autostart=1`);

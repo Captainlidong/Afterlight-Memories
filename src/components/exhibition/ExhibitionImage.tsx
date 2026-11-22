@@ -1,3 +1,4 @@
+import { apiUrl } from "@/lib/appBase";
 import type { PhotoAsset } from "@/types";
 
 /**
@@ -46,7 +47,7 @@ export function ExhibitionImage({
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         className="exhibition-img"
-        src={`/api/files/${exhibitionId}/${photo.id}?variant=${variant}`}
+        src={apiUrl(`/api/files/${exhibitionId}/${photo.id}?variant=${variant}`)}
         alt={label}
         loading="lazy"
         decoding="async"

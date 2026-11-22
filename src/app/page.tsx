@@ -1,3 +1,4 @@
+import { apiUrl } from "@/lib/appBase";
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { getDb } from "@/lib/db/client";
@@ -199,7 +200,7 @@ export default async function HomePage() {
                     {coverId ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
-                        src={`/api/files/${e.id}/${coverId}?variant=thumb`}
+                        src={apiUrl(`/api/files/${e.id}/${coverId}?variant=thumb`)}
                         alt=""
                         className="h-14 w-14 shrink-0 rounded-sm border border-ink-line object-cover"
                       />

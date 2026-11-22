@@ -1,5 +1,6 @@
 "use client";
 
+import { apiUrl } from "@/lib/appBase";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button, Spinner } from "@/components/ui";
@@ -18,7 +19,7 @@ export function DemoResetButton() {
     setNote(null);
     setBusy(true);
     try {
-      const res = await fetch("/api/exhibitions");
+      const res = await fetch(apiUrl("/api/exhibitions"));
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error?.message ?? "读取影展列表失败");
       const ids = (data.exhibitions as Exhibition[])
@@ -42,7 +43,7 @@ export function DemoResetButton() {
     setError(null);
     try {
       for (const id of demoIds) {
-        const res = await fetch(`/api/exhibitions/${id}`, { method: "DELETE" });
+        const res = await fetch(apiUrl(`/api/exhibitions/${id}`), { method: "DELETE" });
         if (!res.ok) {
           const data = await res.json().catch(() => null);
           throw new Error(data?.error?.message ?? `删除 ${id} 失败`);

@@ -1,5 +1,6 @@
 "use client";
 
+import { apiUrl } from "@/lib/appBase";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button, Spinner } from "@/components/ui";
@@ -15,7 +16,7 @@ export function PrivacyDelete({ exhibitionId }: { exhibitionId: string }) {
     setBusy(true);
     setError(null);
     try {
-      const res = await fetch(`/api/exhibitions/${exhibitionId}`, { method: "DELETE" });
+      const res = await fetch(apiUrl(`/api/exhibitions/${exhibitionId}`), { method: "DELETE" });
       if (!res.ok) {
         const body = await res.json().catch(() => null);
         throw new Error(body?.error?.message ?? "删除失败，请重试。");

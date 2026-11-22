@@ -1,12 +1,14 @@
 import useSWR, { mutate } from "swr";
+import { apiUrl } from "@/lib/appBase";
 import type { PhotoAsset, CurationDecisionDTO, MotifDTO, NarrativeDTO, UserEditDTO, VersionSummary, Exhibition, LayoutDTO, QaDTO } from "@/types";
 import type { PhotoInspectionT, AgentTypeT, RunStatusT } from "@/lib/agents/schemas";
 import type { DecisionCounts } from "@/lib/db/curation";
 import type { UndoableOperationSummary } from "@/lib/db/curationOperations";
 import type { ExhibitionAiUsage } from "@/lib/ai/usage";
 
+// SWR key 保持裸路径（缓存键与失效匹配都用它）；代理前缀统一在 fetcher 处拼接。
 export const jsonFetcher = (url: string) =>
-  fetch(url).then(async (r) => {
+  fetch(apiUrl(url)).then(async (r) => {
     const data = await r.json();
     if (!r.ok) throw new Error(data?.error?.message ?? "请求失败");
     return data;

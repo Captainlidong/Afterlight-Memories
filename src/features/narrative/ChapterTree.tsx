@@ -1,5 +1,6 @@
 "use client";
 
+import { apiUrl } from "@/lib/appBase";
 import { useRef, useState } from "react";
 import {
   DndContext,
@@ -159,7 +160,7 @@ export function ChapterTree({
         {activePhoto ? (
           <div className="h-20 w-20 overflow-hidden rounded-md border border-gold/60 shadow-lg">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={`/api/files/${exhibitionId}/${activePhoto.id}?variant=thumb`} alt="" className="h-full w-full object-cover" />
+            <img src={apiUrl(`/api/files/${exhibitionId}/${activePhoto.id}?variant=thumb`)} alt="" className="h-full w-full object-cover" />
           </div>
         ) : null}
       </DragOverlay>
@@ -258,7 +259,7 @@ function SortablePhoto({
       title={photo?.original_name ?? photoId}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={`/api/files/${exhibitionId}/${photoId}?variant=thumb`} alt={photo?.original_name ?? ""} loading="lazy" className="h-full w-full object-cover" />
+      <img src={apiUrl(`/api/files/${exhibitionId}/${photoId}?variant=thumb`)} alt={photo?.original_name ?? ""} loading="lazy" className="h-full w-full object-cover" />
     </div>
   );
 }

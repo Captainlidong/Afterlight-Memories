@@ -1,5 +1,6 @@
 "use client";
 
+import { apiUrl } from "@/lib/appBase";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -113,7 +114,7 @@ export function NarrativeBoard({ exhibitionId }: { exhibitionId: string }) {
       try {
         const current = confirmedNarrative.current;
         if (!current) throw new Error("请先加载叙事，再保存编辑。");
-        const res = await fetch(`/api/exhibitions/${exhibitionId}/narrative`, {
+        const res = await fetch(apiUrl(`/api/exhibitions/${exhibitionId}/narrative`), {
           method: "PATCH", headers: JSON_HEADERS,
           body: JSON.stringify({ edits, expected_version: current.current_version, expected_edit_revision: current.edit_revision }),
         });

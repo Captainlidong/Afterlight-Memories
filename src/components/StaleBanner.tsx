@@ -1,5 +1,6 @@
 "use client";
 
+import { apiUrl } from "@/lib/appBase";
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -57,7 +58,7 @@ export function StaleBanner({ exhibitionId }: { exhibitionId: string }) {
     setBusy(true);
     setError(null);
     try {
-      const patch = await fetch(`/api/exhibitions/${exhibitionId}`, {
+      const patch = await fetch(apiUrl(`/api/exhibitions/${exhibitionId}`), {
         method: "PATCH",
         headers: JSON_HEADERS,
         body: JSON.stringify({ mode: "demo" }),

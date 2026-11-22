@@ -1,8 +1,9 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { useDropzone } from "react-dropzone";
+import { useDropzone, type FileRejection } from "react-dropzone";
 import { Spinner } from "@/components/ui";
+import { apiUrl } from "@/lib/appBase";
 
 interface UploadResult {
   id?: string;
@@ -11,29 +12,41 @@ interface UploadResult {
   error?: string;
 }
 
-function uploadBatch(
+const MAX_SIZE = 25 * 1024 * 1024;
+
+/**
+ * 单张照片上传：边缘代理形态下每个请求只携带一张照片（≤25MB），
+ * 避免整批塞进一个请求体触达平台网关未知上限；失败互不影响，进度按字节累计跨请求连续。
+ */
+function uploadOne(
   exhibitionId: string,
-  files: File[],
-  onProgress: (pct: number) => void,
-): Promise<{ photos: UploadResult[]; uploaded: number; failed: number }> {
-  return new Promise((resolve, reject) => {
+  file: File,
+  onFraction: (fraction: number) => void,
+): Promise<UploadResult> {
+  return new Promise((resolve) => {
     const fd = new FormData();
-    for (const f of files) fd.append("files", f);
+    fd.append("files", file);
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", `/api/exhibitions/${exhibitionId}/photos`);
+    xhr.open("POST", apiUrl(`/api/exhibitions/${exhibitionId}/photos`));
     xhr.upload.onprogress = (e) => {
-      if (e.lengthComputable) onProgress(Math.round((e.loaded / e.total) * 100));
+      if (e.lengthComputable) onFraction(Math.min(1, e.loaded / e.total));
     };
     xhr.onload = () => {
       try {
         const data = JSON.parse(xhr.responseText);
-        if (xhr.status >= 200 && xhr.status < 300) resolve(data);
-        else reject(new Error(data?.error?.message ?? "上传失败"));
+        if (xhr.status >= 200 && xhr.status < 300) {
+          const photo = data?.photos?.[0];
+          resolve(
+            photo ?? { original_name: file.name, status: "uploaded" },
+          );
+        } else {
+          resolve({ original_name: file.name, status: "failed", error: data?.error?.message ?? "上传失败" });
+        }
       } catch {
-        reject(new Error("上传响应解析失败"));
+        resolve({ original_name: file.name, status: "failed", error: "上传响应解析失败" });
       }
     };
-    xhr.onerror = () => reject(new Error("网络错误，上传失败"));
+    xhr.onerror = () => resolve({ original_name: file.name, status: "failed", error: "网络错误，上传失败" });
     xhr.send(fd);
   });
 }
@@ -58,8 +71,18 @@ export function UploadZone({
       setError(null);
       setResults(null);
       try {
-        const data = await uploadBatch(exhibitionId, accepted, setProgress);
-        setResults(data.photos);
+        const total = accepted.reduce((sum, f) => sum + f.size, 0);
+        let sentBefore = 0;
+        const photos: UploadResult[] = [];
+        for (const file of accepted) {
+          const baseBytes = sentBefore;
+          sentBefore += file.size;
+          const result = await uploadOne(exhibitionId, file, (fraction) => {
+            setProgress(Math.round(((baseBytes + fraction * file.size) / total) * 100));
+          });
+          photos.push(result);
+          setResults([...photos]);
+        }
         onUploaded();
       } catch (err) {
         setError(err instanceof Error ? err.message : "上传失败");
@@ -70,10 +93,23 @@ export function UploadZone({
     [exhibitionId, onUploaded],
   );
 
+  // react-dropzone 会在 onDrop 前静默过滤超限/类型不符文件；明确告知用户哪几张没被接收。
+  const onRejected = useCallback((rejections: FileRejection[]) => {
+    const reasons = rejections
+      .map((r) => {
+        const code = r.errors[0]?.code;
+        const reason = code === "file-too-large" ? "超过 25MB" : code === "file-invalid-type" ? "格式不支持" : "读取失败";
+        return `${r.file.name}（${reason}）`;
+      })
+      .join("、");
+    setError(`有 ${rejections.length} 张照片未上传：${reasons}`);
+  }, []);
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
+    onDropRejected: onRejected,
     accept: { "image/jpeg": [".jpg", ".jpeg"], "image/png": [".png"], "image/webp": [".webp"] },
-    maxSize: 10 * 1024 * 1024,
+    maxSize: MAX_SIZE,
     disabled: uploading,
   });
 

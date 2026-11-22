@@ -1,5 +1,6 @@
 "use client";
 
+import { apiUrl } from "@/lib/appBase";
 import { useCallback, useEffect, useMemo, useReducer, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -116,7 +117,7 @@ export function SelectionBoard({ exhibitionId }: { exhibitionId: string }) {
     setBusy(true);
     setError(null);
     try {
-      const res = await fetch(`/api/exhibitions/${exhibitionId}/runs/select`, {
+      const res = await fetch(apiUrl(`/api/exhibitions/${exhibitionId}/runs/select`), {
         method: "POST",
         headers: JSON_HEADERS,
         body: JSON.stringify({ request_id: requestId() }),
@@ -164,7 +165,7 @@ export function SelectionBoard({ exhibitionId }: { exhibitionId: string }) {
       setBusy(true);
       setError(null);
       try {
-        const res = await fetch(`/api/exhibitions/${exhibitionId}/curation/batch`, {
+        const res = await fetch(apiUrl(`/api/exhibitions/${exhibitionId}/curation/batch`), {
           method: "POST",
           headers: JSON_HEADERS,
           body: JSON.stringify({
@@ -217,7 +218,7 @@ export function SelectionBoard({ exhibitionId }: { exhibitionId: string }) {
       setBusy(true);
       setError(null);
       try {
-        const res = await fetch(`/api/exhibitions/${exhibitionId}/curation/operations/${opId}/undo`, {
+        const res = await fetch(apiUrl(`/api/exhibitions/${exhibitionId}/curation/operations/${opId}/undo`), {
           method: "POST",
         });
         const data = await res.json();
@@ -240,7 +241,7 @@ export function SelectionBoard({ exhibitionId }: { exhibitionId: string }) {
       setBusy(true);
       setError(null);
       try {
-        const res = await fetch(`/api/exhibitions/${exhibitionId}/curation/confirm`, {
+        const res = await fetch(apiUrl(`/api/exhibitions/${exhibitionId}/curation/confirm`), {
           method: "POST",
           headers: JSON_HEADERS,
           body: JSON.stringify({
@@ -605,7 +606,7 @@ function DecisionTile({
             {photo.thumbnail_path ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                src={`/api/files/${exhibitionId}/${photo.id}?variant=thumb`}
+                src={apiUrl(`/api/files/${exhibitionId}/${photo.id}?variant=thumb`)}
                 alt={photo.original_name}
                 loading="lazy"
                 className="h-full w-full object-cover"
@@ -718,7 +719,7 @@ function DecisionDetail({
             {photo?.thumbnail_path ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                src={`/api/files/${exhibitionId}/${decision.photo_id}?variant=thumb`}
+                src={apiUrl(`/api/files/${exhibitionId}/${decision.photo_id}?variant=thumb`)}
                 alt={photo.original_name}
                 className="h-full w-full object-contain"
               />
@@ -777,7 +778,7 @@ function DecisionDetail({
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={`/api/files/${exhibitionId}/${p.id}?variant=thumb`}
+                    src={apiUrl(`/api/files/${exhibitionId}/${p.id}?variant=thumb`)}
                     alt={p.original_name}
                     className="h-full w-full object-cover"
                   />

@@ -1,5 +1,6 @@
 "use client";
 
+import { apiUrl } from "@/lib/appBase";
 import { useEffect, useState } from "react";
 import useSWR, { mutate } from "swr";
 import { jsonFetcher, type RunSummary } from "@/lib/hooks";
@@ -128,7 +129,7 @@ export function AgentTrace({ exhibitionId, runs }: { exhibitionId: string; runs:
     setRetryBusy(true);
     setRetryError(null);
     try {
-      const res = await fetch(`/api/exhibitions/${exhibitionId}/runs/retry`, { method: "POST" });
+      const res = await fetch(apiUrl(`/api/exhibitions/${exhibitionId}/runs/retry`), { method: "POST" });
       const body = await res.json();
       if (!res.ok) throw new Error(body?.error?.message ?? "重试失败");
       setSelected(null);

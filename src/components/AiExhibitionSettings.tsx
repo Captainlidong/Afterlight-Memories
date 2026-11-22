@@ -1,5 +1,6 @@
 "use client";
 
+import { apiUrl } from "@/lib/appBase";
 import { useRef, useState } from "react";
 import { useStatus } from "@/lib/hooks";
 import { Button, Spinner } from "./ui";
@@ -17,7 +18,7 @@ export function AiExhibitionSettings({ exhibitionId }: { exhibitionId: string })
     if (pending.current) return;
     pending.current = true; setBusy(true); setError(null);
     try {
-      const res = await fetch(`/api/exhibitions/${exhibitionId}${suffix}`, {
+      const res = await fetch(apiUrl(`/api/exhibitions/${exhibitionId}${suffix}`), {
         method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify(body),
       });
       const result = await res.json();

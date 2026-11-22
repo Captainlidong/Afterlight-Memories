@@ -1,5 +1,6 @@
 "use client";
 
+import { apiUrl } from "@/lib/appBase";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { mutate } from "swr";
@@ -87,14 +88,14 @@ export function LayoutBoard({ exhibitionId }: { exhibitionId: string }) {
     setBusy(true);
     setError(null);
     try {
-      const patch = await fetch(`/api/exhibitions/${exhibitionId}`, {
+      const patch = await fetch(apiUrl(`/api/exhibitions/${exhibitionId}`), {
         method: "PATCH",
         headers: JSON_HEADERS,
         body: JSON.stringify({ template: t }),
       });
       if (!patch.ok) throw new Error((await patch.json())?.error?.message ?? "模板切换失败");
       if (narrative) {
-        const res = await fetch(`/api/exhibitions/${exhibitionId}/runs/layout`, { method: "POST", headers: JSON_HEADERS, body: JSON.stringify({ request_id: requestId() }) });
+        const res = await fetch(apiUrl(`/api/exhibitions/${exhibitionId}/runs/layout`), { method: "POST", headers: JSON_HEADERS, body: JSON.stringify({ request_id: requestId() }) });
         if (!res.ok) throw new Error((await res.json())?.error?.message ?? "布局生成失败");
       }
       await refresh();

@@ -1,5 +1,6 @@
 "use client";
 
+import { apiUrl } from "@/lib/appBase";
 import { useState } from "react";
 import { Button, Spinner } from "@/components/ui";
 
@@ -12,7 +13,7 @@ export function ExportButtons({ exhibitionId, className = "" }: { exhibitionId: 
     setBusy(format);
     setError(null);
     try {
-      const res = await fetch(`/api/exhibitions/${exhibitionId}/export`, {
+      const res = await fetch(apiUrl(`/api/exhibitions/${exhibitionId}/export`), {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ format }),

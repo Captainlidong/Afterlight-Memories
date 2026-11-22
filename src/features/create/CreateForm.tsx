@@ -1,5 +1,6 @@
 "use client";
 
+import { apiUrl } from "@/lib/appBase";
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -57,7 +58,7 @@ export function CreateForm({ demo, defaultMode }: { demo: boolean; defaultMode?:
     setSubmitting(true);
     setError(null);
     try {
-      const res = await fetch("/api/exhibitions", {
+      const res = await fetch(apiUrl("/api/exhibitions"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
